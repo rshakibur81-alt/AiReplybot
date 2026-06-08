@@ -1,0 +1,395 @@
+// ============================================
+// ReplyMind AI - Database Schema (MySQL)
+// ============================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ---- Users ----
+model User {
+  id                 String    @id @default(cuid())
+  email              String    @unique
+  password           String?
+  name               String?
+  image              String?
+  role               Role      @default(USER)
+  plan               Plan      @default(FREE)
+  subscriptionExpiry DateTime?
+  emailVerified      Boolean   @default(false)
+
+  googleId   String? @unique
+  facebookId String? @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  accounts       Account[]
+  sessions       Session[]
+  facebookPages  FacebookPage[]
+  products       Product[]
+  aiInstructions AIInstruction[]
+  botSettings    BotSettings?
+  autoReplies    AutoReply[]
+  conversations  Conversation[]
+  messages       Message[]
+  messageLogs    MessageLog[]
+  subscription   Subscription?
+  apiKeys        ApiKey[]
+  manualPayments ManualPayment[]
+
+  @@map("users")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Plan {
+  FREE
+  PRO
+  PREMIUM
+}
+
+// ---- NextAuth Accounts ----
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ---- Facebook Pages ----
+model FacebookPage {
+  id              String  @id @default(cuid())
+  userId          String
+  pageId          String  @unique
+  pageName        String
+  pageCategory    String?
+  pageAccessToken String
+  pageImageUrl    String?
+  isConnected     Boolean @default(true)
+  isActive        Boolean @default(true)
+  webhookToken    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  autoReplies   AutoReply[]
+  messages      Message[]
+  messageLogs   MessageLog[]
+  conversations Conversation[]
+
+  @@map("facebook_pages")
+}
+
+// ---- Products ----
+model Product {
+  id          String      @id @default(cuid())
+  userId      String
+  name        String
+  price       Float
+  description String
+  imageUrl    String?
+  sizes       String?
+  stockStatus StockStatus @default(in_stock)
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("products")
+}
+
+enum StockStatus {
+  in_stock
+  out_of_stock
+}
+
+// ---- AI Instructions ----
+model AIInstruction {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("ai_instructions")
+}
+
+// ---- Bot Settings ----
+model BotSettings {
+  id              String        @id @default(cuid())
+  userId          String        @unique
+  isActive        Boolean       @default(true)
+  fallbackMessage String        @default("Thank you for your message! We'll get back to you shortly.")
+  responseDelay   ResponseDelay @default(instant)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("bot_settings")
+}
+
+enum ResponseDelay {
+  instant
+  short
+  medium
+}
+
+// ---- Message Logs ----
+model MessageLog {
+  id              String       @id @default(cuid())
+  pageId          String
+  customerPsid    String
+  customerName    String?
+  customerMessage String
+  aiReply         String
+  status          LogStatus    @default(success)
+  tokensUsed      Int          @default(0)
+  duration        Int          @default(0)
+  createdAt       DateTime     @default(now())
+  userId          String
+  page            FacebookPage @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  user            User         @relation(fields: [userId], references: [id])
+
+  @@map("message_logs")
+}
+
+enum LogStatus {
+  success
+  error
+  timeout
+}
+
+// ============================================
+// BD PAYMENT SYSTEM
+// ============================================
+
+// ---- Payment Methods (managed by admin) ----
+model PaymentMethod {
+  id           String   @id @default(cuid())
+  method       String // bKash / Nagad / Rocket / Card
+  number       String
+  accountType  String // Personal / Merchant / Agent
+  isActive     Boolean  @default(true)
+  instructions String
+  usePgwApi    Boolean  @default(false) // For bKash PGW toggle
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("payment_methods")
+}
+
+// ---- Manual Payments (submitted by users) ----
+model ManualPayment {
+  id            String              @id @default(cuid())
+  userId        String
+  planId        String // 'pro' or 'premium'
+  amount        Float
+  method        String // bKash / Nagad / Rocket
+  transactionId String
+  screenshot    String? // image URL
+  status        ManualPaymentStatus @default(PENDING)
+  adminNote     String?
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("manual_payments")
+}
+
+enum ManualPaymentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// ---- bKash Token Storage (for PGW API) ----
+model BKashToken {
+  id           String   @id @default(cuid())
+  idToken      String
+  refreshToken String
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+
+  @@map("bkash_tokens")
+}
+
+// ============================================
+// EXISTING MODELS
+// ============================================
+
+model AutoReply {
+  id           String       @id @default(cuid())
+  userId       String
+  pageId       String
+  name         String
+  triggerType  TriggerType  @default(keyword)
+  triggerValue String
+  replyType    ReplyType    @default(text)
+  replyContent String
+  aiPrompt     String?
+  aiModel      String?      @default("gemini-1.5-flash")
+  isActive     Boolean      @default(true)
+  matchType    MatchType    @default(exact)
+  priority     Int          @default(0)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  page         FacebookPage @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@map("auto_replies")
+}
+
+enum TriggerType {
+  keyword
+  regex
+  ai_auto
+  greeting
+  farewell
+}
+
+enum ReplyType {
+  text
+  ai_generated
+  image
+  template
+}
+
+enum MatchType {
+  exact
+  partial
+  regex
+}
+
+model Conversation {
+  id           String        @id @default(cuid())
+  userId       String
+  pageId       String?
+  senderId     String
+  senderName   String?
+  senderAvatar String?
+  lastMessage  String?
+  isArchived   Boolean       @default(false)
+  isRead       Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  page         FacebookPage? @relation(fields: [pageId], references: [id], onDelete: SetNull)
+  messages     Message[]
+
+  @@map("conversations")
+}
+
+model Message {
+  id             String        @id @default(cuid())
+  userId         String
+  conversationId String
+  pageId         String?
+  senderType     SenderType
+  content        String
+  isAutoReply    Boolean       @default(false)
+  autoReplyId    String?
+  metadata       String?
+  sentAt         DateTime      @default(now())
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conversation   Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  page           FacebookPage? @relation(fields: [pageId], references: [id], onDelete: SetNull)
+
+  @@map("messages")
+}
+
+enum SenderType {
+  user
+  page
+  visitor
+}
+
+model Subscription {
+  id                   String             @id @default(cuid())
+  userId               String             @unique
+  stripeCustomerId     String?            @unique
+  stripeSubscriptionId String?            @unique
+  planType             PlanType           @default(free)
+  status               SubscriptionStatus @default(active)
+  currentPeriodStart   DateTime?
+  currentPeriodEnd     DateTime?
+  cancelAtPeriodEnd    Boolean            @default(false)
+  messagesUsed         Int                @default(0)
+  messagesLimit        Int                @default(100)
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  user                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions")
+}
+
+enum PlanType {
+  free
+  starter
+  professional
+  enterprise
+}
+
+enum SubscriptionStatus {
+  active
+  canceled
+  past_due
+  incomplete
+  trialing
+}
+
+model ApiKey {
+  id        String    @id @default(cuid())
+  userId    String
+  key       String    @unique
+  name      String
+  isActive  Boolean   @default(true)
+  lastUsed  DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("api_keys")
+}
