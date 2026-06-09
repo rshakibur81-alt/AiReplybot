@@ -35,7 +35,13 @@ export const authOptions: NextAuthOptions = {
         console.log('[AUTH] Password validation result:', isValid);
 
         if (!isValid) return null;
-
+const backendRes = await fetch(`${process.env.NEXTAUTH_URL ? process.env.NEXT_PUBLIC_API_URL : 'http://localhost:4000/api/v1'}/auth/login`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email, password: credentials.password }),
+});
+const backendData = await backendRes.json();
+const accessToken = backendData?.data?.token || user.id;
         return {
           id: user.id,
           email: user.email,
@@ -43,7 +49,7 @@ export const authOptions: NextAuthOptions = {
           image: user.image,
           role: user.role,
           plan: user.plan,
-          accessToken: user.id,
+          accessToken: accessToken,
         };
       },
     }),
