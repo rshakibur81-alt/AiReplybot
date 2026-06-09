@@ -34,7 +34,8 @@ export const getApiClient = (): AxiosInstance => {
         if (error.response?.status === 401) {
           // Redirect to login on unauthorized
           if (typeof window !== 'undefined' && 
-          !window.location.pathname.startsWith('/admin')) {
+         !window.location.pathname.startsWith('/admin') &&
+!window.location.pathname.startsWith('/dashboard')) {
           window.location.href = '/login';
           }
         }
