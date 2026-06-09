@@ -43,6 +43,7 @@ export const authOptions: NextAuthOptions = {
           image: user.image,
           role: user.role,
           plan: user.plan,
+          accessToken: user.id,
         };
       },
     }),
@@ -74,7 +75,7 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.role = (user as any).role;
         token.plan = (user as any).plan;
-        token.accessToken = token.sub;
+        token.accessToken = (user as any).accessToken || token.sub;
       }
       return token;
     },
