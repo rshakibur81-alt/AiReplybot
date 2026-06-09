@@ -74,6 +74,7 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.role = (user as any).role;
         token.plan = (user as any).plan;
+        token.accessToken = token.sub;
       }
       return token;
     },
@@ -82,6 +83,7 @@ export const authOptions: NextAuthOptions = {
         (session.user as any).id = token.id;
         (session.user as any).role = token.role;
         (session.user as any).plan = token.plan;
+        (session.user as any).accessToken = token.accessToken;
       }
       return session;
     },
