@@ -2,63 +2,82 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useSession } from 'next-auth/react';
 import {
-  MessageSquare,
-  Bot,
-  Package,
-  CalendarDays,
-  TrendingUp,
-  ArrowUpRight,
-  Clock,
-  User,
+  MessageSquare, Bot, Package, CalendarDays,
+  ArrowUpRight, Clock, TrendingUp,
 } from 'lucide-react';
 import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Area,
-  AreaChart,
+  AreaChart, Area, XAxis, YAxis, CartesianGrid,
+  Tooltip, ResponsiveContainer,
 } from 'recharts';
-
-const chartData = [
-  { day: 'Mon', received: 45, replied: 38 },
-  { day: 'Tue', received: 52, replied: 45 },
-  { day: 'Wed', received: 38, replied: 35 },
-  { day: 'Thu', received: 65, replied: 58 },
-  { day: 'Fri', received: 55, replied: 50 },
-  { day: 'Sat', received: 48, replied: 42 },
-  { day: 'Sun', received: 42, replied: 40 },
-];
-
-const recentActivity = [
-  { action: 'Auto-replied to customer inquiry about pricing', time: '2 min ago', type: 'reply' },
-  { action: 'New product "Summer Dress" added to catalog', time: '15 min ago', type: 'product' },
-  { action: 'Facebook page "My Store" connected successfully', time: '1 hour ago', type: 'connect' },
-  { action: 'AI Instructions updated for greeting tone', time: '3 hours ago', type: 'settings' },
-  { action: '50 messages received today - new record!', time: '5 hours ago', type: 'milestone' },
-  { action: 'Billing: Pro plan subscription renewed', time: '1 day ago', type: 'billing' },
-];
-
-const stats = [
-  { label: 'Total Messages', value: '345', icon: MessageSquare, change: '+12%', color: 'from-purple-500 to-violet-500' },
-  { label: 'Auto-Replies Sent', value: '298', icon: Bot, change: '+8%', color: 'from-blue-500 to-cyan-500' },
-  { label: 'Active Products', value: '24', icon: Package, change: '+3', color: 'from-emerald-500 to-green-500' },
-  { label: 'Days Until Expiry', value: '28', icon: CalendarDays, change: 'FREE plan', color: 'from-amber-500 to-orange-500' },
-];
+import api from '@/lib/api';
 
 export default function OverviewPage() {
+  const { data: session } = useSession();
   const [mounted, setMounted] = useState(false);
+  const [stats, setStats] = useState({
+    totalMessages: 0,
+    autoReplies: 0,
+    activeProducts: 0,
+    daysUntilExpiry: 0,
+    chartData: [] as any[],
+    recentActivity: [] as any[],
+  });
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [subRes, pagesRes, productsRes] = await Promise.allSettled([
+          api.getSubscription(),
+          api.getPages(),
+          api.getAutoReplies(),
+        ]);
+
+        const sub = subRes.status === 'fulfilled' ? subRes.value.data.data : null;
+        const pages = pagesRes.status === 'fulfilled' ? pagesRes.value.data.data : [];
+        const replies = productsRes.status === 'fulfilled' ? productsRes.value.data.data : [];
+
+        // Days until expiry
+        let daysUntilExpiry = 0;
+        if (sub?.currentPeriodEnd) {
+          const diff = new Date(sub.currentPeriodEnd).getTime() - new Date().getTime();
+          daysUntilExpiry = Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24)));
+        }
+
+        setStats({
+          totalMessages: sub?.messagesUsed || 0,
+          autoReplies: replies?.length || 0,
+          activeProducts: pages?.length || 0,
+          daysUntilExpiry,
+          chartData: [],
+          recentActivity: [],
+        });
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const userPlan = (session?.user as any)?.plan || 'FREE';
+
+  const statCards = [
+    { label: 'Messages Used', value: stats.totalMessages.toString(), icon: MessageSquare, change: 'This month', color: 'from-purple-500 to-violet-500' },
+    { label: 'Auto-Replies', value: stats.autoReplies.toString(), icon: Bot, change: 'Total rules', color: 'from-blue-500 to-cyan-500' },
+    { label: 'Connected Pages', value: stats.activeProducts.toString(), icon: Package, change: 'Facebook pages', color: 'from-emerald-500 to-green-500' },
+    { label: 'Days Until Expiry', value: stats.daysUntilExpiry.toString(), icon: CalendarDays, change: `${userPlan} plan`, color: 'from-amber-500 to-orange-500' },
+  ];
 
   if (!mounted) return null;
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
       <div>
         <h1 className="text-2xl font-bold">Overview</h1>
         <p className="text-sm text-muted-foreground mt-1">
@@ -68,125 +87,95 @@ export default function OverviewPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((stat, i) => (
-          <motion.div
-            key={stat.label}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="relative rounded-xl border border-white/5 bg-card/50 p-4 overflow-hidden group hover:border-white/10 transition-colors"
-          >
+        {statCards.map((stat, i) => (
+          <motion.div key={stat.label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
+            className="relative rounded-xl border border-white/5 bg-card/50 p-4 overflow-hidden group hover:border-white/10 transition-colors">
             <div className={`absolute top-0 right-0 w-24 h-24 -translate-y-1/2 translate-x-1/2 rounded-full bg-gradient-to-br ${stat.color} opacity-5 group-hover:opacity-10 transition-opacity`} />
             <div className="flex items-center justify-between mb-3">
               <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${stat.color} p-2 flex items-center justify-center`}>
                 <stat.icon className="h-5 w-5 text-white" />
               </div>
-              <span className={`text-xs font-medium ${
-                stat.change.startsWith('+') ? 'text-green-400' : 'text-muted-foreground'
-              } flex items-center gap-0.5`}>
-                <ArrowUpRight className="h-3 w-3" />
+              <span className="text-xs font-medium text-muted-foreground flex items-center gap-0.5">
                 {stat.change}
               </span>
             </div>
-            <div className="text-2xl font-bold">{stat.value}</div>
+            {loading ? (
+              <div className="h-8 w-16 bg-white/5 rounded animate-pulse mb-1" />
+            ) : (
+              <div className="text-2xl font-bold">{stat.value}</div>
+            )}
             <div className="text-xs text-muted-foreground">{stat.label}</div>
           </motion.div>
         ))}
       </div>
 
-      {/* Chart + Recent Activity */}
+      {/* Chart + Info */}
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* Line Chart */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="lg:col-span-2 rounded-xl border border-white/5 bg-card/50 p-6"
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+          className="lg:col-span-2 rounded-xl border border-white/5 bg-card/50 p-6">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="font-semibold">Messages Overview</h3>
               <p className="text-xs text-muted-foreground">Last 7 days</p>
             </div>
-            <div className="flex items-center gap-4 text-xs">
-              <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-purple-500" />
-                Received
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />
-                Replied
-              </span>
+          </div>
+          {stats.chartData.length === 0 ? (
+            <div className="h-[280px] flex items-center justify-center">
+              <div className="text-center">
+                <TrendingUp className="h-12 w-12 text-muted-foreground/20 mx-auto mb-3" />
+                <p className="text-sm text-muted-foreground">Data আসতে শুরু করলে chart দেখাবে</p>
+                <p className="text-xs text-muted-foreground/50 mt-1">Facebook page connect করুন এবং messages আসলে এখানে দেখাবে</p>
+              </div>
             </div>
-          </div>
-          <div className="h-[280px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData}>
-                <defs>
-                  <linearGradient id="receivedGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#a855f7" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#a855f7" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="repliedGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                <XAxis dataKey="day" stroke="rgba(255,255,255,0.2)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
-                <YAxis stroke="rgba(255,255,255,0.2)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
-                <Tooltip
-                  contentStyle={{
-                    background: 'rgba(15,15,25,0.95)',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: '12px',
-                    fontSize: '13px',
-                  }}
-                  itemStyle={{ color: '#e2e8f0' }}
-                />
-                <Area type="monotone" dataKey="received" stroke="#a855f7" fill="url(#receivedGrad)" strokeWidth={2} />
-                <Area type="monotone" dataKey="replied" stroke="#3b82f6" fill="url(#repliedGrad)" strokeWidth={2} />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
+          ) : (
+            <div className="h-[280px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={stats.chartData}>
+                  <defs>
+                    <linearGradient id="receivedGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#a855f7" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#a855f7" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="repliedGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                  <XAxis dataKey="day" stroke="rgba(255,255,255,0.2)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
+                  <YAxis stroke="rgba(255,255,255,0.2)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
+                  <Tooltip contentStyle={{ background: 'rgba(15,15,25,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', fontSize: '13px' }} />
+                  <Area type="monotone" dataKey="received" stroke="#a855f7" fill="url(#receivedGrad)" strokeWidth={2} />
+                  <Area type="monotone" dataKey="replied" stroke="#3b82f6" fill="url(#repliedGrad)" strokeWidth={2} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          )}
         </motion.div>
 
-        {/* Recent Activity Feed */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="rounded-xl border border-white/5 bg-card/50 p-6"
-        >
+        {/* Recent Activity */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
+          className="rounded-xl border border-white/5 bg-card/50 p-6">
           <h3 className="font-semibold mb-4">Recent Activity</h3>
-          <div className="space-y-4">
-            {recentActivity.map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.4 + i * 0.05 }}
-                className="flex gap-3"
-              >
-                <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${
-                  item.type === 'reply' ? 'from-purple-500/20 to-blue-500/20' :
-                  item.type === 'product' ? 'from-emerald-500/20 to-green-500/20' :
-                  item.type === 'connect' ? 'from-blue-500/20 to-cyan-500/20' :
-                  item.type === 'milestone' ? 'from-amber-500/20 to-orange-500/20' :
-                  'from-gray-500/20 to-gray-600/20'
-                } flex items-center justify-center flex-shrink-0`}>
-                  {item.type === 'reply' ? <Bot className="h-4 w-4 text-purple-400" /> :
-                   item.type === 'product' ? <Package className="h-4 w-4 text-emerald-400" /> :
-                   item.type === 'connect' ? <TrendingUp className="h-4 w-4 text-blue-400" /> :
-                   <Clock className="h-4 w-4 text-amber-400" />}
+          {loading ? (
+            <div className="space-y-4">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="flex gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-white/5 animate-pulse" />
+                  <div className="flex-1 space-y-1">
+                    <div className="h-3 bg-white/5 rounded animate-pulse" />
+                    <div className="h-2 bg-white/5 rounded animate-pulse w-1/2" />
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-muted-foreground truncate">{item.action}</p>
-                  <p className="text-xs text-muted-foreground/50 mt-0.5">{item.time}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center h-40 text-center">
+              <Clock className="h-10 w-10 text-muted-foreground/20 mb-3" />
+              <p className="text-sm text-muted-foreground">এখনো কোনো activity নেই</p>
+              <p className="text-xs text-muted-foreground/50 mt-1">Facebook page connect করলে activity দেখাবে</p>
+            </div>
+          )}
         </motion.div>
       </div>
     </div>
