@@ -86,14 +86,23 @@ const accessToken = backendData?.data?.token || user.id;
       return token;
     },
     async session({ session, token }) {
-      if (session.user) {
-        (session.user as any).id = token.id;
-        (session.user as any).role = token.role;
-        (session.user as any).plan = token.plan;
-        (session.user as any).accessToken = token.accessToken;
-      }
-      return session;
-    },
+  if (session.user) {
+    (session.user as any).id = token.id;
+    (session.user as any).role = token.role;
+    (session.user as any).accessToken = token.accessToken;
+    try {
+      const user = await prisma.user.findUnique({
+        where: { id: token.id as string },
+        select: { plan: true, role: true },
+      });
+      (session.user as any).plan = user?.plan || token.plan;
+      (session.user as any).role = user?.role || token.role;
+    } catch {
+      (session.user as any).plan = token.plan;
+    }
+  }
+  return session;
+},
   },
   session: {
     strategy: 'jwt',
