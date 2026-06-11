@@ -1,39 +1,24 @@
-import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
+import OpenAI from 'openai';
 import config from '../config';
 import prisma from '../config/database';
 
-let genAI: GoogleGenerativeAI | null = null;
-let flashModel: GenerativeModel | null = null;
-let proModel: GenerativeModel | null = null;
+let groqClient: OpenAI | null = null;
 
-const getGeminiFlashModel = (): GenerativeModel => {
-  if (!genAI) {
-    if (!config.gemini.apiKey) {
-      throw new Error('Gemini API key not configured');
+const getGroqClient = (): OpenAI => {
+  if (!groqClient) {
+    if (!config.groq.apiKey) {
+      throw new Error('GROQ_API_KEY not configured');
     }
-    genAI = new GoogleGenerativeAI(config.gemini.apiKey);
+    groqClient = new OpenAI({
+      apiKey: config.groq.apiKey,
+      baseURL: config.groq.baseUrl,
+    });
   }
-  if (!flashModel) {
-    flashModel = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
-  }
-  return flashModel;
-};
-
-const getGeminiProModel = (): GenerativeModel => {
-  if (!genAI) {
-    if (!config.gemini.apiKey) {
-      throw new Error('Gemini API key not configured');
-    }
-    genAI = new GoogleGenerativeAI(config.gemini.apiKey);
-  }
-  if (!proModel) {
-    proModel = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
-  }
-  return proModel;
+  return groqClient;
 };
 
 // ============================================
-// PART B: AI Reply Pipeline
+// AI Reply Pipeline
 // ============================================
 
 interface AIReplyInput {
@@ -52,8 +37,8 @@ interface ReplyResult {
  * Full AI Reply Pipeline:
  * 1. Fetch page owner's AI Instructions
  * 2. Search product catalog via keyword matching (simple RAG)
- * 3. Build Gemini prompt with instructions + products
- * 4. Call Gemini API (gemini-1.5-flash)
+ * 3. Build Groq prompt with instructions + products
+ * 4. Call Groq API (llama-3.3-70b-versatile via OpenAI SDK)
  * 5. Return generated reply + metadata
  */
 export const generateAIReply = async (input: AIReplyInput): Promise<ReplyResult> => {
@@ -72,7 +57,7 @@ export const generateAIReply = async (input: AIReplyInput): Promise<ReplyResult>
       where: {
         userId,
         isActive: true,
-OR: [
+        OR: [
           { name: { contains: message } },
           { description: { contains: message } },
         ],
@@ -108,18 +93,23 @@ Customer Message: "${message}"
 
 Generate a natural, helpful reply:`;
 
-    // Step 4: Call Gemini API (gemini-1.5-flash for speed & cost)
-    const geminiModel = getGeminiFlashModel();
-    const result = await geminiModel.generateContent(systemPrompt);
-    const response = await result.response;
-    const text = response.text();
+    // Step 4: Call Groq API via OpenAI SDK (llama-3.3-70b-versatile)
+    const client = getGroqClient();
+    const completion = await client.chat.completions.create({
+      model: config.groq.model,
+      messages: [
+        { role: 'user', content: systemPrompt },
+      ],
+      max_tokens: 300,
+      temperature: 0.7,
+    });
 
-    // Estimate tokens used (rough: ~4 chars per token)
-    const estimatedTokens = Math.ceil(
-      (systemPrompt.length + text.length) / 4
-    );
+    const text = completion.choices[0]?.message?.content?.trim() || '';
 
-    // Apply response delay if configured (handled externally in facebook.service)
+    // Estimate tokens used from usage data or rough estimate
+    const estimatedTokens = completion.usage?.total_tokens ||
+      Math.ceil((systemPrompt.length + text.length) / 4);
+
     const duration = Date.now() - startTime;
 
     return {
@@ -129,7 +119,7 @@ Generate a natural, helpful reply:`;
     };
   } catch (error) {
     const duration = Date.now() - startTime;
-    console.error('[Gemini] AI Reply Pipeline error:', error);
+    console.error('[Groq] AI Reply Pipeline error:', error);
 
     // Fallback reply
     return {
@@ -141,7 +131,7 @@ Generate a natural, helpful reply:`;
 };
 
 // ============================================
-// Message Intent Analysis (existing)
+// Message Intent Analysis
 // ============================================
 
 export const analyzeMessageIntent = async (message: string): Promise<{
@@ -150,7 +140,7 @@ export const analyzeMessageIntent = async (message: string): Promise<{
   keywords: string[];
 }> => {
   try {
-    const geminiModel = getGeminiProModel();
+    const client = getGroqClient();
     const prompt = `Analyze this customer message and extract:
 1. Intent (what they want: support, inquiry, complaint, feedback, purchase, etc.)
 2. Sentiment (positive, negative, or neutral)
@@ -165,9 +155,16 @@ Respond in JSON format only:
   "keywords": ["...", "..."]
 }`;
 
-    const result = await geminiModel.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
+    const completion = await client.chat.completions.create({
+      model: config.groq.model,
+      messages: [
+        { role: 'user', content: prompt },
+      ],
+      max_tokens: 200,
+      temperature: 0.3,
+    });
+
+    const text = completion.choices[0]?.message?.content?.trim() || '';
 
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
@@ -176,7 +173,7 @@ Respond in JSON format only:
 
     return { intent: 'general', sentiment: 'neutral', keywords: [] };
   } catch (error) {
-    console.error('[Gemini] Analysis error:', error);
+    console.error('[Groq] Analysis error:', error);
     return { intent: 'general', sentiment: 'neutral', keywords: [] };
   }
 };

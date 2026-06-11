@@ -1,7 +1,7 @@
 {
   "name": "replymind-ai-backend",
   "version": "1.0.0",
-  "description": "ReplyMind AI - Backend API Server",
+  "description": "ReplyMind AI - Backend API Server (Groq AI)",
   "main": "dist/server.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
@@ -15,7 +15,6 @@
     "format": "prettier --write src/**/*.ts"
   },
   "dependencies": {
-    "@google/generative-ai": "^0.5.0",
     "@prisma/client": "^5.22.0",
     "axios": "^1.6.7",
     "bcryptjs": "^2.4.3",
@@ -27,6 +26,7 @@
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
+    "openai": "^4.104.0",
     "stripe": "^14.14.0",
     "zod": "^3.22.4"
   },

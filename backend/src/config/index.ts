@@ -20,8 +20,10 @@ const config = {
     expiresIn: process.env.JWT_EXPIRES_IN || '7d',
   },
 
-  gemini: {
-    apiKey: process.env.GEMINI_API_KEY || '',
+  groq: {
+    apiKey: process.env.GROQ_API_KEY || '',
+    baseUrl: process.env.GROQ_BASE_URL || 'https://api.groq.com/openai/v1',
+    model: process.env.GROQ_MODEL || 'llama-3.3-70b-versatile',
   },
 
   facebook: {
