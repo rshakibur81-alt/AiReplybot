@@ -14,7 +14,7 @@ const getGeminiFlashModel = (): GenerativeModel => {
     genAI = new GoogleGenerativeAI(config.gemini.apiKey);
   }
   if (!flashModel) {
-    flashModel = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    flashModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-8b' });
   }
   return flashModel;
 };
@@ -27,7 +27,7 @@ const getGeminiProModel = (): GenerativeModel => {
     genAI = new GoogleGenerativeAI(config.gemini.apiKey);
   }
   if (!proModel) {
-    proModel = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    proModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-8b' });
   }
   return proModel;
 };
