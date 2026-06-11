@@ -50,8 +50,17 @@ export const generateAIReply = async (input: AIReplyInput): Promise<ReplyResult>
     const aiInstruction = await prisma.aIInstruction.findUnique({
       where: { userId },
     });
+
+    console.log('========== DEBUG ==========');
+console.log('USER ID:', userId);
+console.log('PAGE ID:', pageId);
+console.log('AI INSTRUCTION:', aiInstruction);
+console.log('===========================');
+    
     const instructions = aiInstruction?.content || 'Be friendly, helpful, and concise. Respond in the same language as the customer.';
 
+    console.log('FINAL INSTRUCTIONS:', instructions);
+    
     // Step 2: Simple RAG — search product catalog by keyword matching
     const products = await prisma.product.findMany({
       where: {
