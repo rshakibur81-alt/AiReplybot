@@ -51,6 +51,13 @@ export const generateAIReply = async (input: AIReplyInput): Promise<ReplyResult>
       where: { userId },
     });
 
+    const allInstructions = await prisma.aIInstruction.findMany();
+
+console.log('========== DATABASE CHECK ==========');
+console.log('AI INSTRUCTION FOUND:', aiInstruction);
+console.log('ALL INSTRUCTIONS:', allInstructions);
+console.log('====================================');
+
     console.log('========== DEBUG ==========');
 console.log('USER ID:', userId);
 console.log('PAGE ID:', pageId);
