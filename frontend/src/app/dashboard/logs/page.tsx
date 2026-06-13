@@ -54,12 +54,19 @@ setAllLogs(response.data.data || []);
   const [dateFilter, setDateFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
 
-  const filtered = allLogs.filter(log => {
-    const matchesSearch = log.customer.toLowerCase().includes(search.toLowerCase()) ||
-                          log.message.toLowerCase().includes(search.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || log.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  const filtered = allLogs.filter((log: any) => {
+  const customer = log.customer || log.senderName || '';
+  const message = log.message || '';
+
+  const matchesSearch =
+    customer.toLowerCase().includes(search.toLowerCase()) ||
+    message.toLowerCase().includes(search.toLowerCase());
+
+  const matchesStatus =
+    statusFilter === 'all' || log.status === statusFilter;
+
+  return matchesSearch && matchesStatus;
+});
 
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
   const paginated = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
