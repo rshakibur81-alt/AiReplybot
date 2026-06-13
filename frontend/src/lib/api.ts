@@ -101,6 +101,9 @@ getAIInstructions: () => getApiClient().get('/ai-instructions'),
 
 saveAIInstructions: (content: string) =>
   getApiClient().post('/ai-instructions', { content }),
+// Message Logs
+getMessageLogs: () =>
+  getApiClient().get('/logs'),
 };
 
 export default api;
