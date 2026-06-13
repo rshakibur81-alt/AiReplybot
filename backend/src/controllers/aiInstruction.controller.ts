@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import prisma from '../config/database';
 import { AuthRequest } from '../middleware/auth';
 
@@ -9,14 +9,9 @@ export const getAIInstruction = async (
   try {
     const userId = req.userId!;
 
-await prisma.aIInstruction.upsert({
-  where: { userId },
-  update: { content },
-  create: {
-    userId,
-    content,
-  },
-});
+    const instruction = await prisma.aIInstruction.findUnique({
+      where: { userId },
+    });
 
     res.json({
       success: true,
@@ -38,7 +33,7 @@ export const saveAIInstruction = async (
   res: Response
 ): Promise<void> => {
   try {
-    const userId = req.userId;
+    const userId = req.userId!;
     const { content } = req.body;
 
     const instruction = await prisma.aIInstruction.upsert({
