@@ -36,8 +36,6 @@ const [loading, setLoading] = useState(true);
     try {
       const response = await api.getMessageLogs();
 
-      const response = await api.getMessageLogs();
-
 console.log(response.data);
 
 setAllLogs(response.data.data || []);
