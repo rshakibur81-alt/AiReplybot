@@ -24,13 +24,14 @@ interface LogEntry {
   status: 'success' | 'failed' | 'pending';
 }
 
-const [allLogs, setAllLogs] = useState<LogEntry[]>([]);
-const [loading, setLoading] = useState(true);
-
 const ITEMS_PER_PAGE = 5;
 
 export default function LogsPage() {
-useEffect(() => {
+
+  const [allLogs, setAllLogs] = useState<LogEntry[]>([]);
+const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
   const loadLogs = async () => {
     try {
       const response = await api.getMessageLogs();
