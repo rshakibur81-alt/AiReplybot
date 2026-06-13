@@ -48,15 +48,6 @@ export const generateAIReply = async (input: AIReplyInput): Promise<ReplyResult>
   try {
     // Step 1: Fetch AI Instructions from database
 
-    await prisma.aIInstruction.upsert({
-  where: { userId },
-  update: {},
-  create: {
-    userId,
-    content: 'Test AI Instruction',
-  },
-});
-    
     const aiInstruction = await prisma.aIInstruction.findUnique({
       where: { userId },
     });
