@@ -17,11 +17,11 @@ import {
 
 interface LogEntry {
   id: string;
-  customer: string;
-  message: string;
-  aiReply: string;
-  time: string;
-  status: 'success' | 'failed' | 'pending';
+  customerName?: string;
+  customerMessage?: string;
+  aiReply?: string;
+  time?: string;
+  status?: string;
 }
 
 const ITEMS_PER_PAGE = 5;
