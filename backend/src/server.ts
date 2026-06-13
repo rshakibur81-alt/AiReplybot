@@ -1,3 +1,4 @@
+import logsRoutes from './routes/logs.routes';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -15,6 +16,7 @@ import webhookRoutes from './routes/webhook.routes';
 import billingRoutes from './routes/billing.routes';
 import paymentRoutes from './routes/payment.routes';
 import aiInstructionRoutes from './routes/aiInstruction.routes';
+import logsRoutes from './routes/logs.routes';
 import { handleWebhook } from './controllers/billing.controller';
 
 const app = express();
@@ -92,6 +94,7 @@ app.use(`${apiPrefix}/auto-replies`, autoreplyRoutes);
 app.use(`${apiPrefix}/billing`, billingRoutes);
 app.use(`${apiPrefix}/payment`, paymentRoutes);
 app.use(`${apiPrefix}/ai-instructions`, aiInstructionRoutes);
+app.use(`${apiPrefix}/logs`, logsRoutes);
 app.use('/webhook', webhookRoutes);
 
 // ============================================
