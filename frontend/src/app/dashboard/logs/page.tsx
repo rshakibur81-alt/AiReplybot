@@ -35,7 +35,13 @@ const [loading, setLoading] = useState(true);
   const loadLogs = async () => {
     try {
       const response = await api.getMessageLogs();
-      setAllLogs(response.data.logs || []);
+
+      const response = await api.getMessageLogs();
+
+console.log(response.data);
+
+setAllLogs(response.data.data || []);
+      
     } catch (error) {
       console.error('Failed to load logs', error);
     } finally {
