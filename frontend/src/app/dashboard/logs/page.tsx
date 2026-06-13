@@ -55,8 +55,8 @@ setAllLogs(response.data.data || []);
   const [statusFilter, setStatusFilter] = useState('all');
 
   const filtered = allLogs.filter((log: any) => {
-  const customer = log.customer || log.senderName || '';
-  const message = log.message || '';
+  const customer = log.customerName || 'Unknown User';
+const message = log.customerMessage || '';
 
   const matchesSearch =
     customer.toLowerCase().includes(search.toLowerCase()) ||
