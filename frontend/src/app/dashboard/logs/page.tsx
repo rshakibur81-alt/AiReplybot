@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import api from '@/lib/api';
 import { motion } from 'framer-motion';
 import {
   MessageSquare,
@@ -23,20 +24,26 @@ interface LogEntry {
   status: 'success' | 'failed' | 'pending';
 }
 
-const allLogs: LogEntry[] = [
-  { id: '1', customer: 'Rahim Miah', message: 'Do you have any discounts available?', aiReply: 'Yes! We have a 20% discount on your first order with code WELCOME20.', time: '2 min ago', status: 'success' },
-  { id: '2', customer: 'Fatima Begum', message: 'How much is delivery charge?', aiReply: 'Delivery inside Dhaka is ৳60 and outside Dhaka is ৳120.', time: '15 min ago', status: 'success' },
-  { id: '3', customer: 'Kabir Hossain', message: 'I want to return my order', aiReply: 'I apologize for the inconvenience. Please share your order number and I will assist you.', time: '1 hour ago', status: 'success' },
-  { id: '4', customer: 'Nusrat Jahan', message: 'Is the blue dress available in size M?', aiReply: 'Let me check that for you... Yes, the blue summer dress is available in size M!', time: '2 hours ago', status: 'success' },
-  { id: '5', customer: 'Hasan Ali', message: 'Do you ship to Chittagong?', aiReply: 'Yes, we deliver nationwide. Delivery to Chittagong takes 2-3 business days.', time: '3 hours ago', status: 'success' },
-  { id: '6', customer: 'Shamim Reza', message: 'What is your return policy?', aiReply: 'Our return policy allows returns within 7 days of delivery. Please check our policy page for details.', time: '5 hours ago', status: 'success' },
-  { id: '7', customer: 'Ayesha Khatun', message: 'Hello, are you open tomorrow?', aiReply: 'Hi! Yes, we are open from 10 AM to 8 PM tomorrow.', time: '6 hours ago', status: 'success' },
-  { id: '8', customer: 'Abdur Rahman', message: 'I want to cancel my order #1234', aiReply: 'I understand you want to cancel order #1234. Let me process that for you.', time: '8 hours ago', status: 'failed' },
-];
+const [allLogs, setAllLogs] = useState<LogEntry[]>([]);
+const [loading, setLoading] = useState(true);
 
 const ITEMS_PER_PAGE = 5;
 
 export default function LogsPage() {
+useEffect(() => {
+  const loadLogs = async () => {
+    try {
+      const response = await api.getMessageLogs();
+      setAllLogs(response.data.logs || []);
+    } catch (error) {
+      console.error('Failed to load logs', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  loadLogs();
+}, []);
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [dateFilter, setDateFilter] = useState('all');
