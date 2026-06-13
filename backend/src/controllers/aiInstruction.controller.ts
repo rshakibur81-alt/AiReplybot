@@ -7,11 +7,16 @@ export const getAIInstruction = async (
   res: Response
 ): Promise<void> => {
   try {
-    const userId = req.userId;
+    const userId = req.userId!;
 
-    const instruction = await prisma.aIInstruction.findUnique({
-      where: { userId },
-    });
+await prisma.aIInstruction.upsert({
+  where: { userId },
+  update: { content },
+  create: {
+    userId,
+    content,
+  },
+});
 
     res.json({
       success: true,
