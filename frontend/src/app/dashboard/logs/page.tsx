@@ -131,10 +131,10 @@ const message = log.customerMessage || '';
                       <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center">
                         <User className="h-4 w-4 text-purple-400" />
                       </div>
-                      <span className="text-sm font-medium">{log.customer}</span>
+                      <span className="text-sm font-medium">{log.customerName}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-sm text-muted-foreground max-w-[200px] truncate">{log.message}</td>
+                  <td className="px-4 py-3 text-sm text-muted-foreground max-w-[200px] truncate">{log.customerMessage}</td>
                   <td className="hidden lg:table-cell px-4 py-3 text-sm text-muted-foreground max-w-[250px] truncate">
                     <div className="flex items-center gap-1.5">
                       <Bot className="h-3 w-3 text-blue-400 flex-shrink-0" />
