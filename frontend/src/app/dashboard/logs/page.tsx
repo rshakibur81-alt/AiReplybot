@@ -24,7 +24,7 @@ interface LogEntry {
   status?: string;
 }
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 12;
 
 export default function LogsPage() {
 
