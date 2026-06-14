@@ -131,7 +131,9 @@ const message = log.customerMessage || '';
                       <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center">
                         <User className="h-4 w-4 text-purple-400" />
                       </div>
-                      <span className="text-sm font-medium">{log.customerName}</span>
+                      <span className="text-sm font-medium">
+  {log.customerName || 'Facebook User'}
+</span>
                     </div>
                   </td>
                   <td className="px-4 py-3 text-sm text-muted-foreground max-w-[200px] truncate">{log.customerMessage}</td>
