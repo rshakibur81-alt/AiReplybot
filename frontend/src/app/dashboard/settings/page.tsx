@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Settings, ToggleLeft, ToggleRight, Save, Clock, MessageSquare, Check, Bot } from 'lucide-react';
+import { Settings, ToggleLeft, ToggleRight, Save, Clock, MessageSquare, Check, Bot, AlertTriangle } from 'lucide-react';
+import api from '@/lib/api';
 
 export default function BotSettingsPage() {
   const [autoReply, setAutoReply] = useState(true);
@@ -12,14 +13,69 @@ export default function BotSettingsPage() {
   const [responseDelay, setResponseDelay] = useState('instant');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  // Load settings from backend on mount
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        setLoading(true);
+        const response = await api.getBotSettings();
+        const data = response.data.data;
+        setAutoReply(data.isActive);
+        setResponseDelay(data.responseDelay);
+        setFallbackMessage(data.fallbackMessage);
+        setError('');
+      } catch (err: any) {
+        console.error('[BotSettings] Failed to load:', err);
+        setError('Failed to load settings from server');
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadSettings();
+  }, []);
 
   const handleSave = async () => {
-    setSaving(true);
-    await new Promise(r => setTimeout(r, 800));
-    setSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    try {
+      setSaving(true);
+      setError('');
+      await api.updateBotSettings({
+        isActive: autoReply,
+        responseDelay,
+        fallbackMessage,
+      });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (err: any) {
+      console.error('[BotSettings] Failed to save:', err);
+      setError('Failed to save settings. Please try again.');
+    } finally {
+      setSaving(false);
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="space-y-6 max-w-3xl">
+        <div>
+          <h1 className="text-2xl font-bold">Bot Settings</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Configure how your AI bot behaves and responds to customers.
+          </p>
+        </div>
+        <div className="flex items-center justify-center py-16">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+            className="h-8 w-8 border-2 border-purple-500/30 border-t-purple-500 rounded-full"
+          />
+          <span className="ml-3 text-sm text-muted-foreground">Loading settings...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 max-w-3xl">
@@ -29,6 +85,18 @@ export default function BotSettingsPage() {
           Configure how your AI bot behaves and responds to customers.
         </p>
       </div>
+
+      {/* Error Banner */}
+      {error && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center gap-2 p-3 rounded-xl border border-red-500/20 bg-red-500/10 text-red-400 text-sm"
+        >
+          <AlertTriangle className="h-4 w-4 flex-shrink-0" />
+          <span>{error}</span>
+        </motion.div>
+      )}
 
       {/* Auto-Reply Toggle */}
       <motion.div

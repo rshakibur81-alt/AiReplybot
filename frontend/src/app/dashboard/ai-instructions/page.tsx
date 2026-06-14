@@ -1,28 +1,67 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Brain, Save, Clock, Check, Sparkles } from 'lucide-react';
+import { Brain, Save, Clock, Check, Sparkles, AlertCircle } from 'lucide-react';
+import { api } from '@/lib/api';
 
 export default function AIInstructionsPage() {
-  const [instructions, setInstructions] = useState(
-    'Delivery charge inside Dhaka ৳60, outside ৳120. No return policy. Always address customers formally. Offer discounts for bulk orders. Respond in Bangla if customer messages in Bangla.'
-  );
+  const [instructions, setInstructions] = useState('');
   const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
-  const [lastSaved, setLastSaved] = useState<string | null>('Today at 2:30 PM');
+  const [error, setError] = useState<string | null>(null);
+  const [lastSaved, setLastSaved] = useState<string | null>(null);
+
+  // Load saved instructions on mount
+  useEffect(() => {
+    const fetchInstructions = async () => {
+      try {
+        setLoading(true);
+        const response = await api.getAIInstruction();
+        const content = response.data?.data?.content || '';
+        const updatedAt = response.data?.data?.updatedAt;
+        setInstructions(content);
+        if (updatedAt) {
+          setLastSaved(new Date(updatedAt).toLocaleString('en-US', {
+            hour: 'numeric', minute: 'numeric', hour12: true,
+            weekday: 'short',
+          }));
+        }
+      } catch (err: any) {
+        console.error('[AIInstructions] Fetch error:', err);
+        // If 404 / not found, just show empty editor
+        if (err?.response?.status !== 404) {
+          setError('Failed to load instructions. Please refresh.');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchInstructions();
+  }, []);
 
   const handleSave = async () => {
     setSaving(true);
-    // Simulate save
-    await new Promise(r => setTimeout(r, 1000));
-    setSaving(false);
-    setSaved(true);
-    setLastSaved(new Date().toLocaleString('en-US', {
-      hour: 'numeric', minute: 'numeric', hour12: true,
-      weekday: 'short',
-    }));
-    setTimeout(() => setSaved(false), 3000);
+    setError(null);
+    try {
+      const response = await api.saveAIInstruction({ content: instructions });
+      if (response.data?.success) {
+        setSaved(true);
+        setLastSaved(new Date().toLocaleString('en-US', {
+          hour: 'numeric', minute: 'numeric', hour12: true,
+          weekday: 'short',
+        }));
+        setTimeout(() => setSaved(false), 3000);
+      } else {
+        setError('Save returned an unexpected response.');
+      }
+    } catch (err: any) {
+      console.error('[AIInstructions] Save error:', err);
+      setError(err?.response?.data?.message || 'Failed to save instructions. Please try again.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const promptExamples = [
@@ -43,6 +82,18 @@ export default function AIInstructionsPage() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[300px]">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+          className="h-8 w-8 border-2 border-purple-500/30 border-t-purple-500 rounded-full"
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 max-w-3xl">
       <div>
@@ -51,6 +102,18 @@ export default function AIInstructionsPage() {
           Define how your AI should respond to customer messages.
         </p>
       </div>
+
+      {/* Error Message */}
+      {error && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center gap-2 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-400"
+        >
+          <AlertCircle className="h-4 w-4 flex-shrink-0" />
+          {error}
+        </motion.div>
+      )}
 
       {/* Instruction Editor */}
       <motion.div

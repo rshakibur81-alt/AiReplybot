@@ -89,6 +89,15 @@ export const api = {
   savePaymentMethod: (data: any) => getApiClient().post('/payment/methods', data),
   deletePaymentMethod: (id: string) => getApiClient().delete(`/payment/methods/${id}`),
 
+  // AI Instructions
+  getAIInstruction: () => getApiClient().get('/ai-instructions'),
+  saveAIInstruction: (data: { content: string }) => getApiClient().post('/ai-instructions', data),
+
+  // Bot Settings
+  getBotSettings: () => getApiClient().get('/bot-settings'),
+  updateBotSettings: (data: { isActive?: boolean; responseDelay?: string; fallbackMessage?: string }) =>
+    getApiClient().put('/bot-settings', data),
+
   // Manual Payments
   submitManualPayment: (data: { planId: string; amount: number; method: string; transactionId: string; screenshot?: string }) =>
     getApiClient().post('/payment/manual', data),
