@@ -2,20 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-<<<<<<< HEAD
 import { Brain, Save, Clock, Check, Sparkles, AlertCircle } from 'lucide-react';
 import { api } from '@/lib/api';
-=======
-import { Brain, Save, Clock, Check, Sparkles } from 'lucide-react';
-import api from '@/lib/api';
->>>>>>> 329a54a701cb1ee14f2fb55a558fc1385f4310c8
 
 export default function AIInstructionsPage() {
   const [instructions, setInstructions] = useState('');
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
-<<<<<<< HEAD
+
   const [error, setError] = useState<string | null>(null);
   const [lastSaved, setLastSaved] = useState<string | null>(null);
 
@@ -65,7 +60,7 @@ export default function AIInstructionsPage() {
     } catch (err: any) {
       console.error('[AIInstructions] Save error:', err);
       setError(err?.response?.data?.message || 'Failed to save instructions. Please try again.');
-=======
+
   const [lastSaved, setLastSaved] = useState<string | null>(null);
 
   useEffect(() => {
@@ -109,7 +104,7 @@ export default function AIInstructionsPage() {
     } catch (error) {
       console.error('Save failed:', error);
       alert('Failed to save instructions');
->>>>>>> 329a54a701cb1ee14f2fb55a558fc1385f4310c8
+
     } finally {
       setSaving(false);
     }
@@ -157,7 +152,7 @@ export default function AIInstructionsPage() {
         </p>
       </div>
 
-<<<<<<< HEAD
+
       {/* Error Message */}
       {error && (
         <motion.div
@@ -171,8 +166,7 @@ export default function AIInstructionsPage() {
       )}
 
       {/* Instruction Editor */}
-=======
->>>>>>> 329a54a701cb1ee14f2fb55a558fc1385f4310c8
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
