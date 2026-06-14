@@ -66,6 +66,7 @@ export const processIncomingMessage = async (entry: FacebookWebhookEntry): Promi
 
   for (const messaging of entry.messaging) {
     const senderPsid = messaging.sender.id;
+    console.log('PSID:', senderPsid);
     const message = messaging.message;
     const customerName = messaging.sender.name;
     console.log('Sender Data:', messaging.sender);
