@@ -38,6 +38,7 @@ export default function BotSettingsPage() {
   }, []);
 
   const handleSave = async () => {
+    alert('SAVE CLICKED');
     try {
       setSaving(true);
       setError('');
