@@ -20,7 +20,7 @@ interface LogEntry {
   customerName?: string;
   customerMessage?: string;
   aiReply?: string;
-  time?: string;
+  createdAt?: string;
   status?: string;
 }
 
