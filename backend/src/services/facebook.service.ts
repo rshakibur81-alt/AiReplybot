@@ -68,6 +68,7 @@ export const processIncomingMessage = async (entry: FacebookWebhookEntry): Promi
     const senderPsid = messaging.sender.id;
     const message = messaging.message;
     const customerName = messaging.sender.name;
+    console.log('Sender Data:', messaging.sender);
 
     // Ignore messages from the page itself or empty messages
     if (!message || !message.text) continue;
