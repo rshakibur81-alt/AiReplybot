@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import api from '@/lib/api';
 import { motion } from 'framer-motion';
 import {
   MessageSquare,
@@ -16,38 +17,56 @@ import {
 
 interface LogEntry {
   id: string;
-  customer: string;
-  message: string;
-  aiReply: string;
-  time: string;
-  status: 'success' | 'failed' | 'pending';
+  customerName?: string;
+  customerMessage?: string;
+  aiReply?: string;
+  createdAt?: string;
+  status?: string;
 }
 
-const allLogs: LogEntry[] = [
-  { id: '1', customer: 'Rahim Miah', message: 'Do you have any discounts available?', aiReply: 'Yes! We have a 20% discount on your first order with code WELCOME20.', time: '2 min ago', status: 'success' },
-  { id: '2', customer: 'Fatima Begum', message: 'How much is delivery charge?', aiReply: 'Delivery inside Dhaka is ৳60 and outside Dhaka is ৳120.', time: '15 min ago', status: 'success' },
-  { id: '3', customer: 'Kabir Hossain', message: 'I want to return my order', aiReply: 'I apologize for the inconvenience. Please share your order number and I will assist you.', time: '1 hour ago', status: 'success' },
-  { id: '4', customer: 'Nusrat Jahan', message: 'Is the blue dress available in size M?', aiReply: 'Let me check that for you... Yes, the blue summer dress is available in size M!', time: '2 hours ago', status: 'success' },
-  { id: '5', customer: 'Hasan Ali', message: 'Do you ship to Chittagong?', aiReply: 'Yes, we deliver nationwide. Delivery to Chittagong takes 2-3 business days.', time: '3 hours ago', status: 'success' },
-  { id: '6', customer: 'Shamim Reza', message: 'What is your return policy?', aiReply: 'Our return policy allows returns within 7 days of delivery. Please check our policy page for details.', time: '5 hours ago', status: 'success' },
-  { id: '7', customer: 'Ayesha Khatun', message: 'Hello, are you open tomorrow?', aiReply: 'Hi! Yes, we are open from 10 AM to 8 PM tomorrow.', time: '6 hours ago', status: 'success' },
-  { id: '8', customer: 'Abdur Rahman', message: 'I want to cancel my order #1234', aiReply: 'I understand you want to cancel order #1234. Let me process that for you.', time: '8 hours ago', status: 'failed' },
-];
-
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 12;
 
 export default function LogsPage() {
+
+  const [allLogs, setAllLogs] = useState<LogEntry[]>([]);
+const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+  const loadLogs = async () => {
+    try {
+      const response = await api.getMessageLogs();
+
+console.log(response.data);
+
+setAllLogs(response.data.data || []);
+      
+    } catch (error) {
+      console.error('Failed to load logs', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  loadLogs();
+}, []);
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [dateFilter, setDateFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
 
-  const filtered = allLogs.filter(log => {
-    const matchesSearch = log.customer.toLowerCase().includes(search.toLowerCase()) ||
-                          log.message.toLowerCase().includes(search.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || log.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  const filtered = allLogs.filter((log: any) => {
+  const customer = log.customerName || 'Unknown User';
+const message = log.customerMessage || '';
+
+  const matchesSearch =
+    customer.toLowerCase().includes(search.toLowerCase()) ||
+    message.toLowerCase().includes(search.toLowerCase());
+
+  const matchesStatus =
+    statusFilter === 'all' || log.status === statusFilter;
+
+  return matchesSearch && matchesStatus;
+});
 
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
   const paginated = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
@@ -112,10 +131,12 @@ export default function LogsPage() {
                       <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500/20 to-blue-500/20 flex items-center justify-center">
                         <User className="h-4 w-4 text-purple-400" />
                       </div>
-                      <span className="text-sm font-medium">{log.customer}</span>
+                      <span className="text-sm font-medium">
+  {log.customerName || 'Facebook User'}
+</span>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-sm text-muted-foreground max-w-[200px] truncate">{log.message}</td>
+                  <td className="px-4 py-3 text-sm text-muted-foreground max-w-[200px] truncate">{log.customerMessage}</td>
                   <td className="hidden lg:table-cell px-4 py-3 text-sm text-muted-foreground max-w-[250px] truncate">
                     <div className="flex items-center gap-1.5">
                       <Bot className="h-3 w-3 text-blue-400 flex-shrink-0" />
@@ -125,7 +146,7 @@ export default function LogsPage() {
                   <td className="px-4 py-3 text-sm text-muted-foreground whitespace-nowrap">
                     <div className="flex items-center gap-1">
                       <Clock className="h-3 w-3" />
-                      {log.time}
+                      {log.createdAt ? new Date(log.createdAt).toLocaleString() : '-'}
                     </div>
                   </td>
                   <td className="px-4 py-3">

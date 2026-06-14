@@ -47,9 +47,17 @@ export const generateAIReply = async (input: AIReplyInput): Promise<ReplyResult>
 
   try {
     // Step 1: Fetch AI Instructions from database
+
     const aiInstruction = await prisma.aIInstruction.findUnique({
       where: { userId },
     });
+
+    const allInstructions = await prisma.aIInstruction.findMany();
+
+console.log('========== DATABASE CHECK ==========');
+console.log('AI INSTRUCTION FOUND:', aiInstruction);
+console.log('ALL INSTRUCTIONS:', allInstructions);
+console.log('====================================');
 
     console.log('========== DEBUG ==========');
 console.log('USER ID:', userId);

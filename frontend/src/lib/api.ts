@@ -105,6 +105,14 @@ export const api = {
   getAllManualPayments: () => getApiClient().get('/payment/manual/all'),
   reviewManualPayment: (id: string, data: { status: string; adminNote?: string }) =>
     getApiClient().patch(`/payment/manual/${id}`, data),
+  // AI Instructions
+getAIInstructions: () => getApiClient().get('/ai-instructions'),
+
+saveAIInstructions: (content: string) =>
+  getApiClient().post('/ai-instructions', { content }),
+// Message Logs
+getMessageLogs: () =>
+  getApiClient().get('/logs'),
 };
 
 export default api;

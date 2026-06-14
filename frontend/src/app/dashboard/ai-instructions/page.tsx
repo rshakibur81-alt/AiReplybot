@@ -2,14 +2,20 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+<<<<<<< HEAD
 import { Brain, Save, Clock, Check, Sparkles, AlertCircle } from 'lucide-react';
 import { api } from '@/lib/api';
+=======
+import { Brain, Save, Clock, Check, Sparkles } from 'lucide-react';
+import api from '@/lib/api';
+>>>>>>> 329a54a701cb1ee14f2fb55a558fc1385f4310c8
 
 export default function AIInstructionsPage() {
   const [instructions, setInstructions] = useState('');
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
+<<<<<<< HEAD
   const [error, setError] = useState<string | null>(null);
   const [lastSaved, setLastSaved] = useState<string | null>(null);
 
@@ -59,6 +65,51 @@ export default function AIInstructionsPage() {
     } catch (err: any) {
       console.error('[AIInstructions] Save error:', err);
       setError(err?.response?.data?.message || 'Failed to save instructions. Please try again.');
+=======
+  const [lastSaved, setLastSaved] = useState<string | null>(null);
+
+  useEffect(() => {
+    loadInstructions();
+  }, []);
+
+  const loadInstructions = async () => {
+    try {
+      const res = await api.getAIInstructions();
+
+      setInstructions(res.data?.data?.content || '');
+
+      if (res.data?.data?.updatedAt) {
+        setLastSaved(
+          new Date(res.data.data.updatedAt).toLocaleString()
+        );
+      }
+    } catch (error) {
+      console.error('Failed to load instructions:', error);
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      setSaving(true);
+
+      await api.saveAIInstructions(instructions);
+
+      setSaved(true);
+
+      setLastSaved(
+        new Date().toLocaleString('en-US', {
+          hour: 'numeric',
+          minute: 'numeric',
+          hour12: true,
+          weekday: 'short',
+        })
+      );
+
+      setTimeout(() => setSaved(false), 3000);
+    } catch (error) {
+      console.error('Save failed:', error);
+      alert('Failed to save instructions');
+>>>>>>> 329a54a701cb1ee14f2fb55a558fc1385f4310c8
     } finally {
       setSaving(false);
     }
@@ -75,8 +126,11 @@ export default function AIInstructionsPage() {
 
   const toggleExample = (example: string) => {
     const current = instructions;
+
     if (current.includes(example)) {
-      setInstructions(current.replace(example, '').replace(/\n\n+/g, '\n').trim());
+      setInstructions(
+        current.replace(example, '').replace(/\n\n+/g, '\n').trim()
+      );
     } else {
       setInstructions(current + (current ? '\n' : '') + example);
     }
@@ -103,6 +157,7 @@ export default function AIInstructionsPage() {
         </p>
       </div>
 
+<<<<<<< HEAD
       {/* Error Message */}
       {error && (
         <motion.div
@@ -116,6 +171,8 @@ export default function AIInstructionsPage() {
       )}
 
       {/* Instruction Editor */}
+=======
+>>>>>>> 329a54a701cb1ee14f2fb55a558fc1385f4310c8
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -125,6 +182,7 @@ export default function AIInstructionsPage() {
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-violet-500 p-2 flex items-center justify-center shadow-lg">
             <Brain className="h-5 w-5 text-white" />
           </div>
+
           <div>
             <h3 className="font-semibold">Custom Instructions</h3>
             <p className="text-xs text-muted-foreground">
@@ -136,7 +194,7 @@ export default function AIInstructionsPage() {
         <textarea
           value={instructions}
           onChange={(e) => setInstructions(e.target.value)}
-          placeholder="Example: Delivery charge inside Dhaka ৳60, outside ৳120. No return policy. Always address customers formally."
+          placeholder="Write your AI instructions here..."
           className="w-full min-h-[200px] p-4 rounded-xl border border-white/10 bg-background text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 resize-y"
         />
 
@@ -147,6 +205,7 @@ export default function AIInstructionsPage() {
               Last saved: {lastSaved}
             </div>
           )}
+
           <div className="flex items-center gap-3 ml-auto">
             {saved && (
               <motion.span
@@ -158,22 +217,36 @@ export default function AIInstructionsPage() {
                 Saved!
               </motion.span>
             )}
+
             <button
               onClick={handleSave}
               disabled={saving}
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-500 to-blue-500 text-white text-sm font-medium shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:scale-105 transition-all duration-300 disabled:opacity-50"
             >
               {saving ? (
-                <><motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }} className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full" /> Saving...</>
+                <>
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{
+                      duration: 1,
+                      repeat: Infinity,
+                      ease: 'linear',
+                    }}
+                    className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full"
+                  />
+                  Saving...
+                </>
               ) : (
-                <><Save className="h-4 w-4" /> Save Instructions</>
+                <>
+                  <Save className="h-4 w-4" />
+                  Save Instructions
+                </>
               )}
             </button>
           </div>
         </div>
       </motion.div>
 
-      {/* Quick Add Examples */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -182,11 +255,15 @@ export default function AIInstructionsPage() {
       >
         <div className="flex items-center gap-2 mb-4">
           <Sparkles className="h-4 w-4 text-purple-400" />
-          <h3 className="font-semibold text-sm">Quick-add prompt examples</h3>
+          <h3 className="font-semibold text-sm">
+            Quick-add prompt examples
+          </h3>
         </div>
+
         <div className="flex flex-wrap gap-2">
           {promptExamples.map((example) => {
             const isActive = instructions.includes(example);
+
             return (
               <button
                 key={example}
@@ -197,18 +274,20 @@ export default function AIInstructionsPage() {
                     : 'border-white/10 text-muted-foreground hover:border-white/20 hover:text-foreground'
                 }`}
               >
-                {isActive ? '✓ ' : '+ '}{example.slice(0, 50)}...
+                {isActive ? '✓ ' : '+ '}
+                {example.slice(0, 50)}...
               </button>
             );
           })}
         </div>
       </motion.div>
 
-      {/* Tips */}
       <div className="rounded-xl border border-purple-500/10 bg-purple-500/5 p-4">
         <p className="text-xs text-purple-300">
-          <strong className="text-purple-200">💡 Tip:</strong> Be specific about your business rules, pricing, 
-          and tone preferences. The more context you provide, the more accurate and helpful the AI replies will be.
+          <strong className="text-purple-200">💡 Tip:</strong>
+          Be specific about your business rules, pricing, and tone
+          preferences. The more context you provide, the more accurate
+          and helpful the AI replies will be.
         </p>
       </div>
     </div>
