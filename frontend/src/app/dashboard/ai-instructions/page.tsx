@@ -61,35 +61,9 @@ export default function AIInstructionsPage() {
       console.error('[AIInstructions] Save error:', err);
       setError(err?.response?.data?.message || 'Failed to save instructions. Please try again.');
 
-  const [lastSaved, setLastSaved] = useState<string | null>(null);
-
-  useEffect(() => {
-    loadInstructions();
-  }, []);
-
-  const loadInstructions = async () => {
-    try {
-      const res = await api.getAIInstructions();
-
-      setInstructions(res.data?.data?.content || '');
-
-      if (res.data?.data?.updatedAt) {
-        setLastSaved(
-          new Date(res.data.data.updatedAt).toLocaleString()
-        );
-      }
-    } catch (error) {
-      console.error('Failed to load instructions:', error);
-    }
+    
   };
 
-  const handleSave = async () => {
-    try {
-      setSaving(true);
-
-      await api.saveAIInstructions(instructions);
-
-      setSaved(true);
 
       setLastSaved(
         new Date().toLocaleString('en-US', {
