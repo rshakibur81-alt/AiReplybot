@@ -28,11 +28,7 @@ interface Product {
   stock: 'in_stock' | 'out_of_stock';
 }
 
-const initialProducts: Product[] = [
-  { id: '1', name: 'Classic White T-Shirt', price: 450, description: 'Premium quality cotton t-shirt', imageUrl: 'https://picsum.photos/200', sizes: 'S, M, L, XL', stock: 'in_stock' },
-  { id: '2', name: 'Denim Jacket', price: 1899, description: 'Stylish denim jacket for casual wear', imageUrl: 'https://picsum.photos/201', sizes: 'M, L, XL', stock: 'in_stock' },
-  { id: '3', name: 'Summer Dress', price: 1299, description: 'Light floral summer dress', imageUrl: 'https://picsum.photos/202', sizes: 'S, M, L', stock: 'out_of_stock' },
-];
+
 
 const defaultProduct: Product = {
   id: '', name: '', price: 0, description: '', imageUrl: '', sizes: '', stock: 'in_stock',
