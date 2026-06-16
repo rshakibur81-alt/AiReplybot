@@ -69,28 +69,28 @@ console.log('===========================');
 
     console.log('FINAL INSTRUCTIONS:', instructions);
     
-    // Step 2: Simple RAG — search product catalog by keyword matching
     const products = await prisma.product.findMany({
-      where: {
-        userId,
-        isActive: true,
-        OR: [
-          { name: { contains: message } },
-          { description: { contains: message } },
-        ],
-      },
-      take: 5,
-    });
+  where: {
+    userId,
+    isActive: true,
+  },
+  take: 20,
+});
 
-    let productDetails = '';
-    if (products.length > 0) {
-      productDetails = products
-        .map(
-          (p) =>
-            `- ${p.name}: ৳${p.price}. ${p.description}${p.sizes ? ` (Sizes: ${p.sizes})` : ''}${p.stockStatus === 'out_of_stock' ? ' [OUT OF STOCK]' : ''}`
-        )
-        .join('\n');
-    }
+let productDetails = '';
+
+if (products.length > 0) {
+  productDetails = products
+    .map(
+      (p) =>
+        `Product: ${p.name}
+Price: ৳${p.price}
+Description: ${p.description}
+Sizes: ${p.sizes || 'N/A'}
+Stock: ${p.stockStatus}`
+    )
+    .join('\n\n');
+}
 
     // Step 3: Build the full prompt
     const languageInstruction =
