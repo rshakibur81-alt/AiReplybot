@@ -214,6 +214,7 @@ export default function AIInstructionsPage() {
     preferences. The more context you provide, the more accurate
     and helpful the AI replies will be.
   </p>
-</div>
-  );
-}
+ </div>
+ </div>
+ );
+ }
