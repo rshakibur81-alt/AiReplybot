@@ -113,6 +113,20 @@ saveAIInstructions: (content: string) =>
 // Message Logs
 getMessageLogs: () =>
   getApiClient().get('/logs'),
+
+  // Products
+getProducts: () =>
+  getApiClient().get('/products'),
+
+createProduct: (data: any) =>
+  getApiClient().post('/products', data),
+
+updateProduct: (id: string, data: any) =>
+  getApiClient().put(`/products/${id}`, data),
+
+deleteProduct: (id: string) =>
+  getApiClient().delete(`/products/${id}`),
+  
 };
 
 export default api;
