@@ -55,6 +55,36 @@ router.post('/', authenticate, async (req: AuthRequest, res) => {
   }
 });
 
+// Update Product
+router.put('/:id', authenticate, async (req: AuthRequest, res) => {
+  try {
+    const product = await prisma.product.update({
+      where: {
+        id: req.params.id,
+      },
+      data: {
+        name: req.body.name,
+        price: Number(req.body.price),
+        description: req.body.description,
+        imageUrl: req.body.imageUrl || '',
+        sizes: req.body.sizes || '',
+        stockStatus: req.body.stockStatus,
+      },
+    });
+
+    res.json({
+      success: true,
+      data: product,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update product',
+    });
+  }
+});
+
+
 // Delete Product
 router.delete('/:id', authenticate, async (req: AuthRequest, res) => {
   try {
