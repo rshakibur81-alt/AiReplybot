@@ -83,8 +83,6 @@ router.put('/:id', authenticate, async (req: AuthRequest, res) => {
     });
   }
 });
-
-
 // Delete Product
 router.delete('/:id', authenticate, async (req: AuthRequest, res) => {
   try {
