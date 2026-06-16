@@ -163,7 +163,7 @@ try {
                   <td className="px-4 py-3 text-sm">৳{product.price.toLocaleString()}</td>
                   <td className="px-4 py-3 text-sm text-muted-foreground">{product.sizes}</td>
                   <td className="px-4 py-3">
-                    {product.stock === 'in_stock' ? (
+                    {product.stockStatus === 'in_stock' ? (
                       <span className="inline-flex items-center gap-1 text-xs text-green-400 bg-green-500/10 px-2 py-1 rounded-full">
                         <Check className="h-3 w-3" /> In Stock
                       </span>
