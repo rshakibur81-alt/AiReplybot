@@ -6,6 +6,7 @@ import rateLimit from 'express-rate-limit';
 import config from './config';
 import logger from './config/logger';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
+import productRoutes from './routes/product.routes';
 
 // Import routes
 import authRoutes from './routes/auth.routes';
@@ -18,6 +19,7 @@ import aiInstructionRoutes from './routes/aiInstruction.routes';
 import botSettingsRoutes from './routes/botSettings.routes';
 import logsRoutes from './routes/logs.routes';
 import { handleWebhook } from './controllers/billing.controller';
+
 
 const app = express();
 
@@ -90,6 +92,7 @@ const apiPrefix = config.server.apiPrefix;
 
 app.use(`${apiPrefix}/auth`, authRoutes);
 app.use(`${apiPrefix}/pages`, pagesRoutes);
+app.use(`${apiPrefix}/products`, productRoutes);
 app.use(`${apiPrefix}/auto-replies`, autoreplyRoutes);
 app.use(`${apiPrefix}/billing`, billingRoutes);
 app.use(`${apiPrefix}/payment`, paymentRoutes);
