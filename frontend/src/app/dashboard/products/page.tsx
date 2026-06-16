@@ -88,15 +88,7 @@ const saveProduct = async () => {
     console.error(err);
   }
 };
-  if (!validate()) return;
-    if (editingProduct.id) {
-      setProducts(prev => prev.map(p => p.id === editingProduct.id ? editingProduct : p));
-    } else {
-      setProducts(prev => [...prev, { ...editingProduct, id: Date.now().toString() }]);
-    }
-    setModalOpen(false);
-  };
-
+  
   const deleteProduct = (id: string) => {
     setProducts(prev => prev.filter(p => p.id !== id));
   };
