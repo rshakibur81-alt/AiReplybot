@@ -77,16 +77,18 @@ const loadProducts = async () => {
   
 const saveProduct = async () => {
   if (!validate()) return;
-
-  try {
+try {
+  if (editingProduct.id) {
+    await api.updateProduct(editingProduct.id, editingProduct);
+  } else {
     await api.createProduct(editingProduct);
-
-    await loadProducts();
-
-    setModalOpen(false);
-  } catch (err) {
-    console.error(err);
   }
+
+  await loadProducts();
+  setModalOpen(false);
+} catch (err) {
+  console.error(err);
+}
 };
   
   const deleteProduct = (id: string) => {
