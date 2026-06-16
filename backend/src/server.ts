@@ -14,6 +14,9 @@ import autoreplyRoutes from './routes/autoreply.routes';
 import webhookRoutes from './routes/webhook.routes';
 import billingRoutes from './routes/billing.routes';
 import paymentRoutes from './routes/payment.routes';
+import aiInstructionRoutes from './routes/aiInstruction.routes';
+import botSettingsRoutes from './routes/botSettings.routes';
+import logsRoutes from './routes/logs.routes';
 import { handleWebhook } from './controllers/billing.controller';
 
 const app = express();
