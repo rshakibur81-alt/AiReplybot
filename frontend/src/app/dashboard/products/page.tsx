@@ -236,7 +236,15 @@ try {
                   </div>
                   <div>
                     <label className="text-xs font-medium mb-1 block">Stock Status</label>
-                    <select value={editingProduct.stock} onChange={e => setEditingProduct({...editingProduct, stock: e.target.value as any})} className="w-full h-10 px-3 rounded-xl border border-white/10 bg-background text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50">
+                    <select
+  value={editingProduct.stockStatus}
+  onChange={e =>
+    setEditingProduct({
+      ...editingProduct,
+      stockStatus: e.target.value as 'in_stock' | 'out_of_stock'
+    })
+  }
+> className="w-full h-10 px-3 rounded-xl border border-white/10 bg-background text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50">
                       <option value="in_stock">In Stock</option>
                       <option value="out_of_stock">Out of Stock</option>
                     </select>
