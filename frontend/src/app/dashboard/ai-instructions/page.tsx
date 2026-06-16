@@ -100,63 +100,119 @@ export default function AIInstructionsPage() {
     }
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+ if (loading) {
+  return (
+    <div className="flex items-center justify-center min-h-[300px]">
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{
+          duration: 1,
+          repeat: Infinity,
+          ease: 'linear',
+        }}
+        className="h-8 w-8 border-2 border-purple-500/30 border-t-purple-500 rounded-full"
+      />
+    </div>
+  );
 
   return (
-    <div className="space-y-6 max-w-3xl">
-      <h1 className="text-2xl font-bold">
-        AI Instructions
-      </h1>
 
-      {error && (
-        <div className="text-red-500">
-          {error}
-        </div>
-      )}
+{error && (
+  <motion.div
+    initial={{ opacity: 0, y: -10 }}
+    animate={{ opacity: 1, y: 0 }}
+    className="flex items-center gap-2 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-400"
+  >
+    <AlertCircle className="h-4 w-4 flex-shrink-0" />
+    {error}
+  </motion.div>
+)}
 
-      <textarea
-        value={instructions}
-        onChange={(e) =>
-          setInstructions(e.target.value)
-        }
-        className="w-full min-h-[250px] border rounded-lg p-4"
-      />
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  className="rounded-xl border border-white/5 bg-card/50 p-6"
+>
+  <div className="flex items-center gap-3 mb-4">
+    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-violet-500 p-2 flex items-center justify-center shadow-lg">
+      <Brain className="h-5 w-5 text-white" />
+    </div>
 
-      <div className="flex gap-2 flex-wrap">
-        {promptExamples.map((example) => (
-          <button
-            key={example}
-            onClick={() =>
-              toggleExample(example)
-            }
-            className="border rounded px-2 py-1"
-          >
-            {example}
-          </button>
-        ))}
+    <div>
+      <h3 className="font-semibold">Custom Instructions</h3>
+      <p className="text-xs text-muted-foreground">
+        These instructions guide the AI when generating replies
+      </p>
+    </div>
+  </div>
+
+  <textarea
+    value={instructions}
+    onChange={(e) => setInstructions(e.target.value)}
+    placeholder="Write your AI instructions here..."
+    className="w-full min-h-[220px] p-4 rounded-xl border border-white/10 bg-background text-sm resize-y"
+  />
+
+  <div className="flex items-center justify-between mt-4">
+    {lastSaved && (
+      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+        <Clock className="h-3 w-3" />
+        Last saved: {lastSaved}
       </div>
+    )}
+
+    <div className="flex items-center gap-3 ml-auto">
+      {saved && (
+        <span className="flex items-center gap-1 text-xs text-green-400">
+          <Check className="h-3 w-3" />
+          Saved!
+        </span>
+      )}
 
       <button
         onClick={handleSave}
         disabled={saving}
-        className="px-4 py-2 bg-purple-600 text-white rounded"
+        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-500 to-blue-500 text-white text-sm font-medium"
       >
-        {saving ? 'Saving...' : 'Save'}
+        <Save className="h-4 w-4" />
+        {saving ? 'Saving...' : 'Save Instructions'}
       </button>
-
-      {saved && (
-        <div className="text-green-500">
-          Saved successfully
-        </div>
-      )}
-
-      {lastSaved && (
-        <div className="text-sm text-gray-500">
-          Last saved: {lastSaved}
-        </div>
-      )}
     </div>
+  </div>
+</motion.div>
+
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  className="rounded-xl border border-white/5 bg-card/50 p-6"
+>
+  <div className="flex items-center gap-2 mb-4">
+    <Sparkles className="h-4 w-4 text-purple-400" />
+    <h3 className="font-semibold text-sm">
+      Quick-add prompt examples
+    </h3>
+  </div>
+
+  <div className="flex flex-wrap gap-2">
+    {promptExamples.map((example) => (
+      <button
+        key={example}
+        onClick={() => toggleExample(example)}
+        className="px-3 py-1.5 rounded-lg text-xs border border-white/10 hover:border-white/20"
+      >
+        + {example.slice(0, 50)}...
+      </button>
+    ))}
+  </div>
+</motion.div>
+
+<div className="rounded-xl border border-purple-500/10 bg-purple-500/5 p-4">
+  <p className="text-xs text-purple-300">
+    <strong className="text-purple-200">💡 Tip:</strong>
+    Be specific about your business rules, pricing, and tone
+    preferences. The more context you provide, the more accurate
+    and helpful the AI replies will be.
+  </p>
+</div>
   );
 }
