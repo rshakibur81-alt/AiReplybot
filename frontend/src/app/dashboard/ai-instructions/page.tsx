@@ -113,7 +113,8 @@ export default function AIInstructionsPage() {
         className="h-8 w-8 border-2 border-purple-500/30 border-t-purple-500 rounded-full"
       />
     </div>
-  );
+    );
+}
 
   return (
   <div className="space-y-6 max-w-3xl">
