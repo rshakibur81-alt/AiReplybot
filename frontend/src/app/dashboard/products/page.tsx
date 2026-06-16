@@ -25,13 +25,13 @@ interface Product {
   description: string;
   imageUrl: string;
   sizes: string;
-  stock: 'in_stock' | 'out_of_stock';
+  stockStatus: 'in_stock' | 'out_of_stock';
 }
 
 
 
 const defaultProduct: Product = {
-  id: '', name: '', price: 0, description: '', imageUrl: '', sizes: '', stock: 'in_stock',
+  id: '', name: '', price: 0, description: '', imageUrl: '', sizes: '', stockStatus: 'in_stock',
 };
 
 export default function ProductsPage() {
