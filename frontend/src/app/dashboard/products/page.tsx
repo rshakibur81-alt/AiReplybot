@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import api from '@/lib/api';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Package,
@@ -38,7 +39,19 @@ const defaultProduct: Product = {
 };
 
 export default function ProductsPage() {
-  const [products, setProducts] = useState(initialProducts);
+  const [products, setProducts] = useState<Product[]>([]);
+  useEffect(() => {
+  loadProducts();
+}, []);
+
+const loadProducts = async () => {
+  try {
+    const res = await api.getProducts();
+    setProducts(res.data.data || []);
+  } catch (err) {
+    console.error(err);
+  }
+};
   const [modalOpen, setModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product>(defaultProduct);
   const [searchQuery, setSearchQuery] = useState('');
@@ -65,8 +78,21 @@ export default function ProductsPage() {
     return Object.keys(errs).length === 0;
   };
 
-  const saveProduct = () => {
-    if (!validate()) return;
+  
+const saveProduct = async () => {
+  if (!validate()) return;
+
+  try {
+    await api.createProduct(editingProduct);
+
+    await loadProducts();
+
+    setModalOpen(false);
+  } catch (err) {
+    console.error(err);
+  }
+};
+  if (!validate()) return;
     if (editingProduct.id) {
       setProducts(prev => prev.map(p => p.id === editingProduct.id ? editingProduct : p));
     } else {
