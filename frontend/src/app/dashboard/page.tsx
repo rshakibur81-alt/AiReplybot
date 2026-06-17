@@ -31,11 +31,11 @@ export default function OverviewPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [subRes, pagesRes, productsRes] = await Promise.allSettled([
-          api.getSubscription(),
-          api.getPages(),
-          api.getAutoReplies(),
-        ]);
+        const [subRes, pagesRes, logsRes] = await Promise.allSettled([
+  api.getSubscription(),
+  api.getPages(),
+  api.getMessageLogs(),
+]);
 
         const sub = subRes.status === 'fulfilled' ? subRes.value.data.data : null;
         const pages = pagesRes.status === 'fulfilled' ? pagesRes.value.data.data : [];
