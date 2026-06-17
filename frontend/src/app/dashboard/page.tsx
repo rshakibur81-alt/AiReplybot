@@ -124,6 +124,13 @@ logs.forEach((log: any) => {
   change: `${stats.failedReplies} Failed`,
   color: 'from-green-500 to-emerald-500'
 },
+  {
+  label: 'Customer Leads',
+  value: stats.totalCustomers.toString(),
+  icon: Package,
+  change: 'Unique Customers',
+  color: 'from-pink-500 to-rose-500'
+},
   ];
   
 
