@@ -69,3 +69,30 @@ export const getPerformance = async (req: Request, res: Response) => {
     });
   }
 };
+export const getLeads = async (req: Request, res: Response) => {
+  try {
+    const logs = await prisma.messageLog.findMany({
+      where: {
+        userId: (req as any).userId,
+      },
+    });
+
+    const uniqueCustomers = [
+      ...new Set(logs.map((l: any) => l.customerPsid)),
+    ];
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        totalCustomers: uniqueCustomers.length,
+      },
+    });
+  } catch (error) {
+    console.error('Leads Error:', error);
+
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to fetch leads',
+    });
+  }
+};
