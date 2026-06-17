@@ -48,7 +48,7 @@ export default function OverviewPage() {
         const logs = logsRes.status === 'fulfilled'
   ? logsRes.value.data.data
   : [];
-      const performance =
+     const performance =
   perfRes.status === 'fulfilled'
     ? perfRes.value.data.data
     : {
@@ -62,13 +62,6 @@ const products =
   productsRes.status === 'fulfilled'
     ? productsRes.value.data.data
     : [];
-    ? perfRes.value.data.data
-    : {
-        total: 0,
-        success: 0,
-        failed: 0,
-        successRate: 0,
-      };
         const leads =
   leadsRes.status === 'fulfilled'
     ? leadsRes.value.data.data
