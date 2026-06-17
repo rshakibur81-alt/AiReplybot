@@ -55,7 +55,13 @@ export default function OverviewPage() {
   autoReplies: logs.filter((l:any) => l.status === 'success').length || 0,
   activeProducts: pages.length || 0,
   daysUntilExpiry,
-  chartData: [],
+  chartData: [
+  {
+    day: 'Today',
+    received: logs.length,
+    replied: logs.filter((l:any) => l.status === 'success').length,
+  },
+],
   recentActivity: logs.slice(0, 10),
 });
       } catch (err) {
