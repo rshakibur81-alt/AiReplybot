@@ -39,7 +39,9 @@ export default function OverviewPage() {
 
         const sub = subRes.status === 'fulfilled' ? subRes.value.data.data : null;
         const pages = pagesRes.status === 'fulfilled' ? pagesRes.value.data.data : [];
-        const replies = productsRes.status === 'fulfilled' ? productsRes.value.data.data : [];
+        const logs = logsRes.status === 'fulfilled'
+  ? logsRes.value.data.data
+  : [];
 
         // Days until expiry
         let daysUntilExpiry = 0;
