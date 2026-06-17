@@ -113,6 +113,8 @@ saveAIInstructions: (content: string) =>
 // Message Logs
 getMessageLogs: () =>
   getApiClient().get('/logs'),
+  getPerformance: () =>
+  getApiClient().get('/logs/performance'),
 
   // Products
 getProducts: () =>
