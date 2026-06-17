@@ -167,9 +167,34 @@ logs.forEach((log: any) => {
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
                   <XAxis dataKey="day" stroke="rgba(255,255,255,0.2)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
                   <YAxis stroke="rgba(255,255,255,0.2)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
-                  <Tooltip contentStyle={{ background: 'rgba(15,15,25,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', fontSize: '13px' }} />
-                  <Area type="monotone" dataKey="received" stroke="#a855f7" fill="url(#receivedGrad)" strokeWidth={2} />
-                  <Area type="monotone" dataKey="replied" stroke="#3b82f6" fill="url(#repliedGrad)" strokeWidth={2} />
+                  <Tooltip
+  contentStyle={{
+    background: '#0f172a',
+    border: '1px solid #8B5CF6',
+    borderRadius: '16px',
+    color: '#fff',
+    boxShadow: '0 0 20px rgba(139,92,246,0.4)',
+  }}
+/>
+                 <Area
+  type="monotone"
+  dataKey="received"
+  stroke="#8B5CF6"
+  fill="url(#receivedGrad)"
+  strokeWidth={4}
+  dot={{ r: 6 }}
+  activeDot={{ r: 8 }}
+/>
+
+<Area
+  type="monotone"
+  dataKey="replied"
+  stroke="#06B6D4"
+  fill="url(#repliedGrad)"
+  strokeWidth={4}
+  dot={{ r: 6 }}
+  activeDot={{ r: 8 }}
+/>
                 </AreaChart>
               </ResponsiveContainer>
             </div>
