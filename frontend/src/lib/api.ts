@@ -116,6 +116,11 @@ getMessageLogs: () =>
   getPerformance: () =>
   getApiClient().get('/logs/performance'),
 
+getLeads: () =>
+  getApiClient().get('/logs/leads'),
+  getPerformance: () =>
+  getApiClient().get('/logs/performance'),
+
   // Products
 getProducts: () =>
   getApiClient().get('/products'),
