@@ -22,7 +22,8 @@ export default function OverviewPage() {
     activeProducts: 0,
     daysUntilExpiry: 0,
     successRate: 0,
-failedReplies: 0,
+    failedReplies: 0,
+    totalCustomers: 0,
     chartData: [] as any[],
     recentActivity: [] as any[],
   });
@@ -33,11 +34,12 @@ failedReplies: 0,
   useEffect(() => {
     const fetchData = async () => {
       try {
-       const [subRes, pagesRes, logsRes, perfRes] = await Promise.allSettled([
+      const [subRes, pagesRes, logsRes, perfRes, leadsRes] = await Promise.allSettled([
   api.getSubscription(),
   api.getPages(),
   api.getMessageLogs(),
   api.getPerformance(),
+  api.getLeads(),
 ]);
         const sub = subRes.status === 'fulfilled' ? subRes.value.data.data : null;
         const pages = pagesRes.status === 'fulfilled' ? pagesRes.value.data.data : [];
@@ -52,6 +54,12 @@ failedReplies: 0,
         success: 0,
         failed: 0,
         successRate: 0,
+      };
+        const leads =
+  leadsRes.status === 'fulfilled'
+    ? leadsRes.value.data.data
+    : {
+        totalCustomers: 0,
       };
 const last7Days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -89,7 +97,8 @@ logs.forEach((log: any) => {
   daysUntilExpiry,
  chartData,
           successRate: Number(performance.successRate),
-failedReplies: performance.failed,
+  failedReplies: performance.failed,
+  totalCustomers: leads.totalCustomers,       
   recentActivity: logs.slice(0, 10),
 });
       } catch (err) {
