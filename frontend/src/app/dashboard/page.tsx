@@ -135,7 +135,7 @@ logs.forEach((log: any) => {
       {/* Chart + Info */}
       <div className="grid lg:grid-cols-3 gap-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-          className="lg:col-span-2 rounded-xl border border-white/5 bg-card/50 p-6">
+          className="lg:col-span-2 rounded-2xl border border-purple-500/20 bg-gradient-to-br from-slate-950 to-slate-900 p-6 shadow-[0_0_40px_rgba(168,85,247,0.15)]">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="font-semibold">Messages Overview</h3>
