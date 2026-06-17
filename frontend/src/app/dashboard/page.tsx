@@ -21,6 +21,8 @@ export default function OverviewPage() {
     autoReplies: 0,
     activeProducts: 0,
     daysUntilExpiry: 0,
+    successRate: 0,
+failedReplies: 0,
     chartData: [] as any[],
     recentActivity: [] as any[],
   });
@@ -31,17 +33,26 @@ export default function OverviewPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [subRes, pagesRes, logsRes] = await Promise.allSettled([
+       const [subRes, pagesRes, logsRes, perfRes] = await Promise.allSettled([
   api.getSubscription(),
   api.getPages(),
   api.getMessageLogs(),
+  api.getPerformance(),
 ]);
-
         const sub = subRes.status === 'fulfilled' ? subRes.value.data.data : null;
         const pages = pagesRes.status === 'fulfilled' ? pagesRes.value.data.data : [];
         const logs = logsRes.status === 'fulfilled'
   ? logsRes.value.data.data
   : [];
+      const performance =
+  perfRes.status === 'fulfilled'
+    ? perfRes.value.data.data
+    : {
+        total: 0,
+        success: 0,
+        failed: 0,
+        successRate: 0,
+      };
 const last7Days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 const chartData = last7Days.map((day) => ({
