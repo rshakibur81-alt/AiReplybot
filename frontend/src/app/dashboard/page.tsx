@@ -49,11 +49,19 @@ export default function OverviewPage() {
   ? logsRes.value.data.data
   : [];
       const performance =
-        const products =
+  perfRes.status === 'fulfilled'
+    ? perfRes.value.data.data
+    : {
+        total: 0,
+        success: 0,
+        failed: 0,
+        successRate: 0,
+      };
+
+const products =
   productsRes.status === 'fulfilled'
     ? productsRes.value.data.data
     : [];
-  perfRes.status === 'fulfilled'
     ? perfRes.value.data.data
     : {
         total: 0,
@@ -136,6 +144,13 @@ logs.forEach((log: any) => {
   icon: Package,
   change: 'Unique Customers',
   color: 'from-pink-500 to-rose-500'
+},
+  {
+  label: 'Products',
+  value: stats.topProducts.toString(),
+  icon: Package,
+  change: 'Top Products',
+  color: 'from-indigo-500 to-purple-500'
 },
   ];
   
