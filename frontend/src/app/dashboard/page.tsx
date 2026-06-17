@@ -105,7 +105,8 @@ logs.forEach((log: any) => {
  chartData,
           successRate: Number(performance.successRate),
   failedReplies: performance.failed,
-  totalCustomers: leads.totalCustomers,       
+  totalCustomers: leads.totalCustomers,  
+  topProducts: products.length,        
   recentActivity: logs.slice(0, 10),
 });
       } catch (err) {
