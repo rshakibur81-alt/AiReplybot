@@ -88,6 +88,8 @@ logs.forEach((log: any) => {
   activeProducts: pages.length || 0,
   daysUntilExpiry,
  chartData,
+          successRate: Number(performance.successRate),
+failedReplies: performance.failed,
   recentActivity: logs.slice(0, 10),
 });
       } catch (err) {
@@ -106,7 +108,15 @@ logs.forEach((log: any) => {
     { label: 'AI Replies Sent', value: stats.autoReplies.toString(), icon: Bot, change: 'Total rules', color: 'from-blue-500 to-cyan-500' },
     { label: 'Connected Pages', value: stats.activeProducts.toString(), icon: Package, change: 'Facebook pages', color: 'from-emerald-500 to-green-500' },
     { label: 'Days Until Expiry', value: stats.daysUntilExpiry.toString(), icon: CalendarDays, change: `${userPlan} plan`, color: 'from-amber-500 to-orange-500' },
+ {
+  label: 'AI Success Rate',
+  value: `${stats.successRate}%`,
+  icon: TrendingUp,
+  change: `${stats.failedReplies} Failed`,
+  color: 'from-green-500 to-emerald-500'
+},
   ];
+  
 
   if (!mounted) return null;
 
@@ -120,7 +130,7 @@ logs.forEach((log: any) => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         {statCards.map((stat, i) => (
           <motion.div key={stat.label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
             className="relative rounded-xl border border-white/5 bg-card/50 p-4 overflow-hidden group hover:border-white/10 transition-colors">
