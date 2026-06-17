@@ -51,13 +51,13 @@ export default function OverviewPage() {
         }
 
         setStats({
-          totalMessages: sub?.messagesUsed || 0,
-          autoReplies: replies?.length || 0,
-          activeProducts: pages?.length || 0,
-          daysUntilExpiry,
-          chartData: [],
-          recentActivity: [],
-        });
+  totalMessages: logs.length || 0,
+  autoReplies: logs.filter((l:any) => l.status === 'success').length || 0,
+  activeProducts: pages.length || 0,
+  daysUntilExpiry,
+  chartData: [],
+  recentActivity: logs.slice(0, 10),
+});
       } catch (err) {
         console.error(err);
       } finally {
