@@ -76,8 +76,8 @@ export default function OverviewPage() {
   const userPlan = (session?.user as any)?.plan || 'FREE';
 
   const statCards = [
-    { label: 'Messages Used', value: stats.totalMessages.toString(), icon: MessageSquare, change: 'This month', color: 'from-purple-500 to-violet-500' },
-    { label: 'Auto-Replies', value: stats.autoReplies.toString(), icon: Bot, change: 'Total rules', color: 'from-blue-500 to-cyan-500' },
+    { label: 'Messages Received', value: stats.totalMessages.toString(), icon: MessageSquare, change: 'This month', color: 'from-purple-500 to-violet-500' },
+    { label: 'AI Replies Sent', value: stats.autoReplies.toString(), icon: Bot, change: 'Total rules', color: 'from-blue-500 to-cyan-500' },
     { label: 'Connected Pages', value: stats.activeProducts.toString(), icon: Package, change: 'Facebook pages', color: 'from-emerald-500 to-green-500' },
     { label: 'Days Until Expiry', value: stats.daysUntilExpiry.toString(), icon: CalendarDays, change: `${userPlan} plan`, color: 'from-amber-500 to-orange-500' },
   ];
