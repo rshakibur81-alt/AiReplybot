@@ -172,11 +172,33 @@ export default function OverviewPage() {
               ))}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center h-40 text-center">
-              <Clock className="h-10 w-10 text-muted-foreground/20 mb-3" />
-              <p className="text-sm text-muted-foreground">এখনো কোনো activity নেই</p>
-              <p className="text-xs text-muted-foreground/50 mt-1">Facebook page connect করলে activity দেখাবে</p>
-            </div>
+            stats.recentActivity.length > 0 ? (
+  <div className="space-y-3">
+    {stats.recentActivity.slice(0, 5).map((log: any) => (
+      <div
+        key={log.id}
+        className="border border-white/5 rounded-lg p-3"
+      >
+        <p className="text-sm font-medium">
+          {log.customerName || 'Customer'}
+        </p>
+
+        <p className="text-xs text-muted-foreground truncate">
+          {log.customerMessage}
+        </p>
+
+        <p className="text-xs text-green-500 mt-1">
+          AI Reply Sent
+        </p>
+      </div>
+    ))}
+  </div>
+) : (
+  <div className="flex flex-col items-center justify-center h-40 text-center">
+    <Clock className="h-10 w-10 text-muted-foreground/20 mb-3" />
+    <p className="text-sm text-muted-foreground">No activity found</p>
+  </div>
+)
           )}
         </motion.div>
       </div>
