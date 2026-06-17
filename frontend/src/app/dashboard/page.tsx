@@ -24,6 +24,7 @@ export default function OverviewPage() {
     successRate: 0,
     failedReplies: 0,
     totalCustomers: 0,
+    topProducts: 0,
     chartData: [] as any[],
     recentActivity: [] as any[],
   });
@@ -34,12 +35,13 @@ export default function OverviewPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-      const [subRes, pagesRes, logsRes, perfRes, leadsRes] = await Promise.allSettled([
+      const [subRes, pagesRes, logsRes, perfRes, leadsRes, productsRes] = await Promise.allSettled([
   api.getSubscription(),
   api.getPages(),
   api.getMessageLogs(),
   api.getPerformance(),
   api.getLeads(),
+  api.getProducts(),     
 ]);
         const sub = subRes.status === 'fulfilled' ? subRes.value.data.data : null;
         const pages = pagesRes.status === 'fulfilled' ? pagesRes.value.data.data : [];
@@ -47,6 +49,10 @@ export default function OverviewPage() {
   ? logsRes.value.data.data
   : [];
       const performance =
+        const products =
+  productsRes.status === 'fulfilled'
+    ? productsRes.value.data.data
+    : [];
   perfRes.status === 'fulfilled'
     ? perfRes.value.data.data
     : {
