@@ -42,7 +42,28 @@ export default function OverviewPage() {
         const logs = logsRes.status === 'fulfilled'
   ? logsRes.value.data.data
   : [];
+const last7Days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
+const chartData = last7Days.map((day) => ({
+  day,
+  received: 0,
+  replied: 0,
+}));
+
+logs.forEach((log: any) => {
+  const d = new Date(log.createdAt);
+  const dayName = last7Days[d.getDay()];
+
+  const index = chartData.findIndex((x) => x.day === dayName);
+
+  if (index !== -1) {
+    chartData[index].received += 1;
+
+    if (log.status === 'success') {
+      chartData[index].replied += 1;
+    }
+  }
+});
         // Days until expiry
         let daysUntilExpiry = 0;
         if (sub?.currentPeriodEnd) {
@@ -55,13 +76,7 @@ export default function OverviewPage() {
   autoReplies: logs.filter((l:any) => l.status === 'success').length || 0,
   activeProducts: pages.length || 0,
   daysUntilExpiry,
-  chartData: [
-  {
-    day: 'Today',
-    received: logs.length,
-    replied: logs.filter((l:any) => l.status === 'success').length,
-  },
-],
+ chartData,
   recentActivity: logs.slice(0, 10),
 });
       } catch (err) {
