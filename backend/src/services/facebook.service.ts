@@ -187,10 +187,11 @@ if (orderInfo.isOrder) {
 const addressMatch = message.text.match(/ঠিকানা[:：]?\s*(.+)/);
 
 const customerRealName =
-  nameMatch?.[1]?.trim() || customerName;
+  nameMatch?.[1]?.trim() || customerName || 'Unknown';
 
 const customerAddress =
-  addressMatch?.[1]?.trim() || message.text;
+  addressMatch?.[1]?.trim() || 'No Address';
+  
   await prisma.order.create({
   data: {
     userId: pageOwner.id,
