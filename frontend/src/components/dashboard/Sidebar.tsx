@@ -12,6 +12,7 @@ import {
   MessageSquare,
   Settings,
   CreditCard,
+  ShoppingCart,
   ChevronLeft,
   ChevronRight,
   Bot,
@@ -25,6 +26,7 @@ const menuItems = [
   { href: '/dashboard/logs', label: 'Message Logs', icon: MessageSquare },
   { href: '/dashboard/settings', label: 'Bot Settings', icon: Settings },
   { href: '/dashboard/billing', label: 'Billing', icon: CreditCard },
+  { href: '/dashboard/orders', label: 'Orders', icon: ShoppingCart },
 ];
 
 interface SidebarProps {
