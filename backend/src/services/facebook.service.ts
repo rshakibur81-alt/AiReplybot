@@ -164,6 +164,19 @@ try {
       await sendFacebookMessage(senderPsid, replyText, facebookPage.pageAccessToken);
 
       // Step 8: Log the conversation to database
+
+      await prisma.order.create({
+  data: {
+    userId: pageOwner.id,
+    customerName: customerName || "Unknown",
+    phone: "Not Provided",
+    email: null,
+    address: message.text,
+    facebookPsid: senderPsid,
+    productName: null,
+  },
+});
+      
       await prisma.messageLog.create({
         data: {
           pageId: facebookPage.id,
