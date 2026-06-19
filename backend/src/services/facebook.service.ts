@@ -145,6 +145,13 @@ try {
       }
 
       // Step 5: Trigger the AI Reply Pipeline
+
+      const orderInfo = extractOrderInfo(message.text);
+
+if (orderInfo.isOrder) {
+  ...
+}
+      
       const aiResult = await generateAIReply({
         message: message.text,
         pageId: facebookPage.id,
@@ -206,10 +213,12 @@ const customerAddress =
 });
 
   await sendFacebookMessage(
-    senderPsid,
-    '✅ আপনার অর্ডার রিকোয়েস্ট গ্রহণ করা হয়েছে।',
-    facebookPage.pageAccessToken
-  );
+  senderPsid,
+  '✅ আপনার অর্ডার রিকোয়েস্ট গ্রহণ করা হয়েছে। আপনাকে শীঘ্রই কল করে জানানো হবে।',
+  facebookPage.pageAccessToken
+);
+
+continue;
 } 
       await prisma.messageLog.create({
         data: {
