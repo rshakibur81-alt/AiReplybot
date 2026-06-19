@@ -97,8 +97,6 @@ export const processIncomingMessage = async (entry: FacebookWebhookEntry): Promi
 
       const { user: pageOwner } = facebookPage;
 
-const { user: pageOwner } = facebookPage;
-
 try {
   const userInfo = await axios.get(
     `https://graph.facebook.com/${senderPsid}`,
@@ -117,24 +115,7 @@ try {
   console.log('Could not fetch customer name');
 }
       
-      
-      try {
-  const userInfo = await axios.get(
-    `https://graph.facebook.com/${senderPsid}`,
-    {
-      params: {
-        fields: 'first_name,last_name',
-        access_token: facebookPage.pageAccessToken,
-      },
-    }
-  );
-
-  
-  console.log('Customer Name:', customerName);
-} catch (error) {
-  console.log('Could not fetch customer name');
-}
-      
+   
       // Step 2: Check if bot is active for this page
       if (!facebookPage.isActive || !facebookPage.isConnected) {
         console.log(`[Facebook Webhook] Bot inactive for page ${facebookPage.pageName}. Skipping.`);
