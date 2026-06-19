@@ -42,7 +42,7 @@ model User {
   subscription   Subscription?
   apiKeys        ApiKey[]
   manualPayments ManualPayment[]
-
+  orders Order[]
   @@map("users")
 }
 
@@ -392,4 +392,25 @@ model ApiKey {
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("api_keys")
+}
+model Order {
+  id           String   @id @default(cuid())
+  userId       String
+
+  customerName String
+  phone        String
+  email        String?
+  address      String
+
+  productName  String?
+  facebookPsid String
+
+  status       String   @default("NEW")
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("orders")
 }
