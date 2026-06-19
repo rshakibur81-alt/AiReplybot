@@ -165,18 +165,44 @@ try {
 
       // Step 8: Log the conversation to database
 
-      await prisma.order.create({
-  data: {
-    userId: pageOwner.id,
-    customerName: customerName || "Unknown",
-    phone: "Not Provided",
-    email: null,
-    address: message.text,
-    facebookPsid: senderPsid,
-    productName: null,
-  },
-});
-      
+    function extractOrderInfo(text: string) {
+  const phoneMatch = text.match(/01[3-9]\d{8}/);
+
+  const isOrder =
+    phoneMatch &&
+    (
+      text.includes('ঠিকানা') ||
+      text.toLowerCase().includes('address') ||
+      text.length > 20
+    );
+
+  return {
+    isOrder,
+    phone: phoneMatch?.[0] || '',
+  };
+}
+     const orderInfo = extractOrderInfo(message.text);
+
+if (orderInfo.isOrder) {
+  await prisma.order.create({
+    data: {
+      userId: pageOwner.id,
+      customerName: customerName || 'Unknown',
+      phone: orderInfo.phone,
+      email: null,
+      address: message.text,
+      facebookPsid: senderPsid,
+      productName: null,
+      status: 'NEW',
+    },
+  });
+
+  await sendFacebookMessage(
+    senderPsid,
+    '✅ আপনার অর্ডার রিকোয়েস্ট গ্রহণ করা হয়েছে।',
+    facebookPage.pageAccessToken
+  );
+} 
       await prisma.messageLog.create({
         data: {
           pageId: facebookPage.id,
