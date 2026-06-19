@@ -97,8 +97,7 @@ export const processIncomingMessage = async (entry: FacebookWebhookEntry): Promi
 
       const { user: pageOwner } = facebookPage;
 
-customerName =
-  `${userInfo.data.first_name || ''} ${userInfo.data.last_name || ''}`.trim();
+const { user: pageOwner } = facebookPage;
 
 try {
   const userInfo = await axios.get(
@@ -114,6 +113,23 @@ try {
   customerName =
     `${userInfo.data.first_name || ''} ${userInfo.data.last_name || ''}`.trim();
 
+} catch (error) {
+  console.log('Could not fetch customer name');
+}
+      
+      
+      try {
+  const userInfo = await axios.get(
+    `https://graph.facebook.com/${senderPsid}`,
+    {
+      params: {
+        fields: 'first_name,last_name',
+        access_token: facebookPage.pageAccessToken,
+      },
+    }
+  );
+
+  
   console.log('Customer Name:', customerName);
 } catch (error) {
   console.log('Could not fetch customer name');
