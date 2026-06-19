@@ -119,6 +119,10 @@ getPerformance: () =>
 
 getLeads: () =>
   getApiClient().get('/logs/leads'),
+
+  getOrders: () =>
+  getApiClient().get('/orders'),
+  
   // Products
 getProducts: () =>
   getApiClient().get('/products'),
