@@ -18,6 +18,7 @@ import paymentRoutes from './routes/payment.routes';
 import aiInstructionRoutes from './routes/aiInstruction.routes';
 import botSettingsRoutes from './routes/botSettings.routes';
 import logsRoutes from './routes/logs.routes';
+import ordersRoutes from './routes/orders.routes';
 import { handleWebhook } from './controllers/billing.controller';
 
 
@@ -100,6 +101,7 @@ app.use(`${apiPrefix}/ai-instructions`, aiInstructionRoutes);
 app.use(`${apiPrefix}/bot-settings`, botSettingsRoutes);
 app.use(`${apiPrefix}/ai-instructions`, aiInstructionRoutes);
 app.use(`${apiPrefix}/logs`, logsRoutes);
+app.use(`${apiPrefix}/orders`, ordersRoutes);
 app.use('/webhook', webhookRoutes);
 
 // ============================================
