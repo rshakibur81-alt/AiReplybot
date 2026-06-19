@@ -184,18 +184,27 @@ try {
      const orderInfo = extractOrderInfo(message.text);
 
 if (orderInfo.isOrder) {
+  const nameMatch = message.text.match(/নাম[:：]?\s*(.+?)(?=ফোন|ঠিকানা|$)/);
+
+const addressMatch = message.text.match(/ঠিকানা[:：]?\s*(.+)/);
+
+const customerRealName =
+  nameMatch?.[1]?.trim() || customerName;
+
+const customerAddress =
+  addressMatch?.[1]?.trim() || message.text;
   await prisma.order.create({
-    data: {
-      userId: pageOwner.id,
-      customerName: customerName || 'Unknown',
-      phone: orderInfo.phone,
-      email: null,
-      address: message.text,
-      facebookPsid: senderPsid,
-      productName: null,
-      status: 'NEW',
-    },
-  });
+  data: {
+    userId: pageOwner.id,
+    customerName: customerRealName,
+    phone: orderInfo.phone,
+    email: null,
+    address: customerAddress,
+    facebookPsid: senderPsid,
+    productName: null,
+    status: 'NEW',
+  },
+});
 
   await sendFacebookMessage(
     senderPsid,
