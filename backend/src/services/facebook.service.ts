@@ -97,7 +97,8 @@ export const processIncomingMessage = async (entry: FacebookWebhookEntry): Promi
 
       const { user: pageOwner } = facebookPage;
 
-let customerName = null;
+customerName =
+  `${userInfo.data.first_name || ''} ${userInfo.data.last_name || ''}`.trim();
 
 try {
   const userInfo = await axios.get(
