@@ -46,6 +46,38 @@ export default function OrdersPage() {
     alert('Copied Successfully');
   };
 
+  const exportToExcel = () => {
+  const excelData = orders.map((order) => ({
+    Name: order.customerName,
+    Phone: order.phone,
+    Address: order.address,
+    Product: order.productName || '',
+    Status: order.status,
+    Date: new Date(order.createdAt).toLocaleString(),
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(excelData);
+  const workbook = XLSX.utils.book_new();
+
+  XLSX.utils.book_append_sheet(
+    workbook,
+    worksheet,
+    'Orders'
+  );
+
+  const excelBuffer = XLSX.write(workbook, {
+    bookType: 'xlsx',
+    type: 'array',
+  });
+
+  const fileData = new Blob([excelBuffer]);
+
+  saveAs(
+    fileData,
+    `Orders-${new Date().toISOString().split('T')[0]}.xlsx`
+  );
+};
+  
   return (
     <div className="space-y-6">
 
