@@ -181,7 +181,11 @@ try {
     phone: phoneMatch?.[0] || '',
   };
 }
-     
+
+    const orderInfo = extractOrderInfo(message.text);
+
+if (orderInfo.isOrder) {  
+      
   const nameMatch = message.text.match(/নাম[:：]?\s*(.+?)(?=ফোন|ঠিকানা|$)/);
 
 const addressMatch = message.text.match(/ঠিকানা[:：]?\s*(.+)/);
