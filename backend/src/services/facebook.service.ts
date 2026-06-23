@@ -146,7 +146,7 @@ try {
 
       // Step 5: Trigger the AI Reply Pipeline
 
-      const orderInfo = extractOrderInfo(message.text);
+
 
 if (orderInfo.isOrder) {
   
