@@ -92,29 +92,30 @@ export default function OrdersPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-  <button
-    onClick={exportToExcel}
-    className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white font-medium"
-  >
-    Download Excel
-  </button>
+       <div className="flex items-center justify-between">
+  <div>
+    <h1 className="text-3xl font-bold text-white">
+      Orders
+    </h1>
 
-  <div className="flex gap-3 items-center">
-
-  <button
-    onClick={exportToExcel}
-    className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white font-medium"
-  >
-    Download Excel
-  </button>
-
-  <div className="px-4 py-2 rounded-full bg-purple-500/20 text-purple-400 font-medium">
-    {filteredOrders.length} Orders
+    <p className="text-gray-400">
+      Customer Order Management Dashboard
+    </p>
   </div>
 
-</div>
+  <div className="flex items-center gap-3">
+    <button
+      onClick={exportToExcel}
+      className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white font-medium"
+    >
+      Download Excel
+    </button>
 
+    <div className="px-4 py-2 rounded-full bg-purple-500/20 text-purple-400 font-medium">
+      {filteredOrders.length} Orders
+    </div>
+  </div>
+</div>
       <div className="bg-black/20 border border-white/10 rounded-xl p-5">
 
         <input
