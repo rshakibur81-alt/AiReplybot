@@ -149,7 +149,7 @@ try {
       const orderInfo = extractOrderInfo(message.text);
 
 if (orderInfo.isOrder) {
-  ...
+  
 }
       
       const aiResult = await generateAIReply({
@@ -234,7 +234,7 @@ continue;
         },
       });
 
-      console.log(`[Facebook Webhook] Reply sent to ${customerName || senderPsid}: "${replyText.substring(0, 60)}..."`);
+      console.log(`[Facebook Webhook] Reply sent to ${customerName || senderPsid}: "${replyText.substring(0, 60)}"`);
     } catch (error) {
       console.error('[Facebook Webhook] Error processing message:', error);
 
