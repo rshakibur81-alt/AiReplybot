@@ -146,11 +146,6 @@ try {
 
       // Step 5: Trigger the AI Reply Pipeline
 
-
-
-if (orderInfo.isOrder) {
-  
-}
       
       const aiResult = await generateAIReply({
         message: message.text,
