@@ -51,7 +51,37 @@ export default function OrdersPage() {
   };
 
   const exportToExcel = () => {
-  const excelData = orders.map((order) => ({
+
+  let exportOrders = [...orders];
+
+  if (fromDate) {
+    exportOrders = exportOrders.filter(
+      (o) => new Date(o.createdAt) >= new Date(fromDate)
+    );
+  }
+
+  if (toDate) {
+    const end = new Date(toDate);
+    end.setHours(23,59,59,999);
+
+    exportOrders = exportOrders.filter(
+      (o) => new Date(o.createdAt) <= end
+    );
+  }
+
+  if (statusFilter !== 'ALL') {
+    exportOrders = exportOrders.filter(
+      (o) => o.status === statusFilter
+    );
+  }
+
+  if (productFilter !== 'ALL') {
+    exportOrders = exportOrders.filter(
+      (o) => o.productName === productFilter
+    );
+  }
+
+  const excelData = exportOrders.map((order) => ({
     Name: order.customerName,
     Phone: order.phone,
     Address: order.address,
@@ -61,6 +91,7 @@ export default function OrdersPage() {
   }));
 
   const worksheet = XLSX.utils.json_to_sheet(excelData);
+
   const workbook = XLSX.utils.book_new();
 
   XLSX.utils.book_append_sheet(
@@ -69,17 +100,16 @@ export default function OrdersPage() {
     'Orders'
   );
 
-  const excelBuffer = XLSX.write(workbook, {
-    bookType: 'xlsx',
-    type: 'array',
+  const excelBuffer = XLSX.write(workbook,{
+    bookType:'xlsx',
+    type:'array'
   });
 
-  const fileData = new Blob([excelBuffer]);
-
   saveAs(
-    fileData,
+    new Blob([excelBuffer]),
     `Orders-${new Date().toISOString().split('T')[0]}.xlsx`
   );
+
 };
   
   return (
