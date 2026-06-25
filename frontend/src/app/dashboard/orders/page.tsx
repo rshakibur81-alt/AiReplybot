@@ -162,13 +162,17 @@ export default function OrdersPage() {
   >
     <option value="ALL">All Products</option>
 
-    {[...new Set(
-      orders.map((o: any) => o.productName).filter(Boolean)
-    )].map((product: any) => (
-      <option key={product} value={product}>
-        {product}
-      </option>
-    ))}
+    {Array.from(
+  new Set(
+    orders
+      .map((o: any) => o.productName)
+      .filter(Boolean)
+  )
+).map((product: any) => (
+  <option key={product} value={product}>
+    {product}
+  </option>
+))}
   </select>
 
   <button
