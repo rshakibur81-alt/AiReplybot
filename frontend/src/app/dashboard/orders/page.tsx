@@ -11,7 +11,11 @@ export default function OrdersPage() {
   const [filteredOrders, setFilteredOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
+  const [statusFilter, setStatusFilter] = useState('ALL');
+  const [productFilter, setProductFilter] = useState('ALL');
+  
   useEffect(() => {
     loadOrders();
   }, []);
