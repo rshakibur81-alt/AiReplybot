@@ -127,19 +127,63 @@ export default function OrdersPage() {
         </div>
 
       
+<div className="flex items-center gap-3 flex-wrap">
 
-  <div className="flex items-center gap-3">
-    <button
-      onClick={exportToExcel}
-      className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white font-medium"
-    >
-      Download Excel
-    </button>
+  <input
+    type="date"
+    value={fromDate}
+    onChange={(e) => setFromDate(e.target.value)}
+    className="bg-black border border-white/10 rounded-lg px-3 py-2"
+  />
 
-    <div className="px-4 py-2 rounded-full bg-purple-500/20 text-purple-400 font-medium">
-      {filteredOrders.length} Orders
-    </div>
+  <input
+    type="date"
+    value={toDate}
+    onChange={(e) => setToDate(e.target.value)}
+    className="bg-black border border-white/10 rounded-lg px-3 py-2"
+  />
+
+  <select
+    value={statusFilter}
+    onChange={(e) => setStatusFilter(e.target.value)}
+    className="bg-black border border-white/10 rounded-lg px-3 py-2"
+  >
+    <option value="ALL">All Status</option>
+    <option value="NEW">NEW</option>
+    <option value="PROCESSING">PROCESSING</option>
+    <option value="COMPLETED">COMPLETED</option>
+    <option value="CANCELLED">CANCELLED</option>
+  </select>
+
+  <select
+    value={productFilter}
+    onChange={(e) => setProductFilter(e.target.value)}
+    className="bg-black border border-white/10 rounded-lg px-3 py-2"
+  >
+    <option value="ALL">All Products</option>
+
+    {[...new Set(
+      orders.map((o: any) => o.productName).filter(Boolean)
+    )].map((product: any) => (
+      <option key={product} value={product}>
+        {product}
+      </option>
+    ))}
+  </select>
+
+  <button
+    onClick={exportToExcel}
+    className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white font-medium"
+  >
+    Download Excel
+  </button>
+
+  <div className="px-4 py-2 rounded-full bg-purple-500/20 text-purple-400 font-medium">
+    {filteredOrders.length} Orders
   </div>
+
+</div>
+ 
 </div>
       <div className="bg-black/20 border border-white/10 rounded-xl p-5">
 
