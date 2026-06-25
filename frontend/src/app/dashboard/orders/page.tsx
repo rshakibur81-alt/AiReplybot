@@ -92,16 +92,7 @@ export default function OrdersPage() {
           </p>
         </div>
 
-       <div className="flex items-center justify-between">
-  <div>
-    <h1 className="text-3xl font-bold text-white">
-      Orders
-    </h1>
-
-    <p className="text-gray-400">
-      Customer Order Management Dashboard
-    </p>
-  </div>
+      
 
   <div className="flex items-center gap-3">
     <button
