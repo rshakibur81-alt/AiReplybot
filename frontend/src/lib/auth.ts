@@ -35,7 +35,29 @@ export const authOptions: NextAuthOptions = {
         console.log('[AUTH] Password validation result:', isValid);
 
         if (!isValid) return null;
-const backendRes = await fetch(`${process.env.NEXTAUTH_URL ? process.env.NEXT_PUBLIC_API_URL : 'http://localhost:4000/api/v1'}/auth/login`, {
+
+       const backendRes = await fetch(
+  `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+  {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      email,
+      password: credentials.password,
+    }),
+  }
+);
+     console.log('Backend Login Status:', backendRes.status);
+
+const backendData = await backendRes.json();
+
+console.log('Backend Response:', backendData);
+
+const accessToken = backendData?.data?.token;
+        
+        {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ email, password: credentials.password }),
