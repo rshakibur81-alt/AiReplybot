@@ -57,13 +57,7 @@ console.log('Backend Response:', backendData);
 
 const accessToken = backendData?.data?.token;
         
-        {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ email, password: credentials.password }),
-});
-const backendData = await backendRes.json();
-const accessToken = backendData?.data?.token || user.id;
+      
         return {
           id: user.id,
           email: user.email,
