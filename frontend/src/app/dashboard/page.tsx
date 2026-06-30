@@ -71,6 +71,10 @@ const products =
   productsRes.status === 'fulfilled'
     ? productsRes.value.data.data
     : [];
+ const orders =
+  ordersRes.status === 'fulfilled'
+    ? ordersRes.value.data.data
+    : [];       
         const leads =
   leadsRes.status === 'fulfilled'
     ? leadsRes.value.data.data
