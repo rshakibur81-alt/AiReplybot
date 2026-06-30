@@ -161,6 +161,13 @@ logs.forEach((log: any) => {
   change: 'Top Products',
   color: 'from-indigo-500 to-purple-500'
 },
+  {
+  label: 'Total Orders',
+  value: stats.totalOrders.toString(),
+  icon: Package,
+  change: 'Customer Orders',
+  color: 'from-green-500 to-emerald-500'
+},  
   ];
   
 
