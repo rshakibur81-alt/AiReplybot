@@ -120,7 +120,8 @@ logs.forEach((log: any) => {
           successRate: Number(performance.successRate),
   failedReplies: performance.failed,
   totalCustomers: leads.totalCustomers,  
-  topProducts: products.length,        
+  topProducts: products.length,  
+  totalOrders: orders.length,       
   recentActivity: logs.slice(0, 10),
 });
       } catch (err) {
