@@ -76,21 +76,28 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     }
 
     // Generate token
-    const token = generateToken(user.id, user.email);
+const token = generateToken(user.id, user.email);
 
-    res.json({
-      success: true,
-      message: 'Login successful',
-      data: {
-        user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          image: user.image,
-        },
-        token,
-      },
-    });
+console.log("========== LOGIN ==========");
+console.log("User ID:", user.id);
+console.log("Email:", user.email);
+console.log("Generated Token:", token);
+console.log("===========================");
+
+res.json({
+  success: true,
+  message: 'Login successful',
+  data: {
+    user: {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      image: user.image,
+    },
+    token,
+  },
+});
+    
   } catch (error) {
     console.error('[Auth] Login error:', error);
     res.status(500).json({ success: false, message: 'Login failed' });
