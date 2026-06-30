@@ -25,6 +25,7 @@ export default function OverviewPage() {
     failedReplies: 0,
     totalCustomers: 0,
     topProducts: 0,
+    totalOrders: 0,
     chartData: [] as any[],
     recentActivity: [] as any[],
   });
