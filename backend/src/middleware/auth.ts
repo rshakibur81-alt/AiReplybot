@@ -26,8 +26,13 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
       return;
     }
 
-    const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, config.jwt.secret) as JwtPayload;
+   const token = authHeader.split(' ')[1];
+
+console.log("Received Token:", token);
+
+const decoded = jwt.verify(token, config.jwt.secret) as JwtPayload;
+
+console.log("Decoded JWT:", decoded);
 
     req.userId = decoded.userId;
     req.userEmail = decoded.email;
