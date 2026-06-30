@@ -35,13 +35,22 @@ export default function OverviewPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-      const [subRes, pagesRes, logsRes, perfRes, leadsRes, productsRes] = await Promise.allSettled([
+      const [
+  subRes,
+  pagesRes,
+  logsRes,
+  perfRes,
+  leadsRes,
+  productsRes,
+  ordersRes,
+] = await Promise.allSettled([            
   api.getSubscription(),
   api.getPages(),
   api.getMessageLogs(),
   api.getPerformance(),
   api.getLeads(),
-  api.getProducts(),     
+  api.getProducts(),   
+  api.getOrders(),     
 ]);
         const sub = subRes.status === 'fulfilled' ? subRes.value.data.data : null;
         const pages = pagesRes.status === 'fulfilled' ? pagesRes.value.data.data : [];
