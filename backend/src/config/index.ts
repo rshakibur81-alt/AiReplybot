@@ -26,13 +26,14 @@ const config = {
     model: process.env.GROQ_MODEL || 'llama-3.3-70b-versatile',
   },
 
-  facebook: {
-    appId: process.env.FACEBOOK_APP_ID || '',
-    appSecret: process.env.FACEBOOK_APP_SECRET || '',
-    pageAccessToken: process.env.FACEBOOK_PAGE_ACCESS_TOKEN || '',
-    webhookVerifyToken: process.env.FACEBOOK_WEBHOOK_VERIFY_TOKEN || '',
-    graphApiVersion: process.env.FACEBOOK_GRAPH_API_VERSION || 'v19.0',
-  },
+ facebook: {
+  appId: process.env.FACEBOOK_APP_ID || '',
+  appSecret: process.env.FACEBOOK_APP_SECRET || '',
+  redirectUri: process.env.FACEBOOK_REDIRECT_URI || '',
+  pageAccessToken: process.env.FACEBOOK_PAGE_ACCESS_TOKEN || '',
+  webhookVerifyToken: process.env.FACEBOOK_WEBHOOK_VERIFY_TOKEN || '',
+  graphApiVersion: process.env.FACEBOOK_GRAPH_API_VERSION || 'v19.0',
+},
 
   stripe: {
     secretKey: process.env.STRIPE_SECRET_KEY || '',
